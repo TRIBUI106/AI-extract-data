@@ -1,0 +1,265 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1780571216343,
+  "projectRoot": "D:\\Code\\AI-extract-data",
+  "techStack": {
+    "languages": [
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "requirements.txt"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "pip",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": "snake_case",
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "assets",
+      "bin",
+      "src"
+    ],
+    "gitBranches": {
+      "defaultBranch": "master",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "assets": {
+      "path": "assets",
+      "purpose": "Static assets",
+      "fileCount": 2,
+      "lastAccessed": 1780571216320,
+      "keyFiles": [
+        "screenshot_v2.2.png",
+        "screenshot_v2.2_en.png"
+      ]
+    },
+    "bin": {
+      "path": "bin",
+      "purpose": "Executable scripts",
+      "fileCount": 2,
+      "lastAccessed": 1780571216321,
+      "keyFiles": [
+        "wget.exe"
+      ]
+    },
+    "demo": {
+      "path": "demo",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1780571216322,
+      "keyFiles": [
+        "demo1.png",
+        "demo2.pdf",
+        "demo3.png"
+      ]
+    },
+    "models": {
+      "path": "models",
+      "purpose": "Data models",
+      "fileCount": 0,
+      "lastAccessed": 1780571216323,
+      "keyFiles": []
+    },
+    "ollama": {
+      "path": "ollama",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1780571216323,
+      "keyFiles": [
+        "ollama.exe",
+        "vc_redist.x64.exe"
+      ]
+    },
+    "python": {
+      "path": "python",
+      "purpose": null,
+      "fileCount": 34,
+      "lastAccessed": 1780571216323,
+      "keyFiles": [
+        "libcrypto-3.dll",
+        "libffi-8.dll",
+        "libssl-3.dll",
+        "LICENSE.txt",
+        "pyexpat.pyd"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 8,
+      "lastAccessed": 1780571216324,
+      "keyFiles": [
+        "config.py",
+        "file_handler.py",
+        "lang_handler.py",
+        "main.py",
+        "ocr_worker.py"
+      ]
+    },
+    "ollama\\lib": {
+      "path": "ollama\\lib",
+      "purpose": "Library code",
+      "fileCount": 0,
+      "lastAccessed": 1780571216325,
+      "keyFiles": []
+    },
+    "python\\Lib": {
+      "path": "python\\Lib",
+      "purpose": "Library code",
+      "fileCount": 0,
+      "lastAccessed": 1780571216325,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "src\\ui\\main_window.py",
+      "accessCount": 2,
+      "lastAccessed": 1780571320099,
+      "type": "file"
+    },
+    {
+      "path": "src\\ocr_worker.py",
+      "accessCount": 2,
+      "lastAccessed": 1780571771257,
+      "type": "file"
+    },
+    {
+      "path": "src\\ollama_service.py",
+      "accessCount": 2,
+      "lastAccessed": 1780571771807,
+      "type": "file"
+    },
+    {
+      "path": "config.toml",
+      "accessCount": 2,
+      "lastAccessed": 1780571892977,
+      "type": "file"
+    },
+    {
+      "path": "src\\config.py",
+      "accessCount": 2,
+      "lastAccessed": 1780571893062,
+      "type": "file"
+    },
+    {
+      "path": "README.md",
+      "accessCount": 1,
+      "lastAccessed": 1780571303952,
+      "type": "file"
+    },
+    {
+      "path": "src\\main.py",
+      "accessCount": 1,
+      "lastAccessed": 1780571306417,
+      "type": "file"
+    },
+    {
+      "path": "src\\file_handler.py",
+      "accessCount": 1,
+      "lastAccessed": 1780571306899,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui\\control_panel.py",
+      "accessCount": 1,
+      "lastAccessed": 1780571309434,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui\\output_panel.py",
+      "accessCount": 1,
+      "lastAccessed": 1780571309598,
+      "type": "file"
+    },
+    {
+      "path": "requirements.txt",
+      "accessCount": 1,
+      "lastAccessed": 1780571309705,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui\\dialogs.py",
+      "accessCount": 1,
+      "lastAccessed": 1780571313433,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui\\settings_dialog.py",
+      "accessCount": 1,
+      "lastAccessed": 1780571313561,
+      "type": "file"
+    },
+    {
+      "path": "README_en.md",
+      "accessCount": 1,
+      "lastAccessed": 1780571313972,
+      "type": "file"
+    },
+    {
+      "path": "src\\i18n\\en.json",
+      "accessCount": 1,
+      "lastAccessed": 1780571316446,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui",
+      "accessCount": 1,
+      "lastAccessed": 1780571317076,
+      "type": "directory"
+    },
+    {
+      "path": "src",
+      "accessCount": 1,
+      "lastAccessed": 1780571320559,
+      "type": "directory"
+    },
+    {
+      "path": "src\\lang_handler.py",
+      "accessCount": 1,
+      "lastAccessed": 1780571322996,
+      "type": "file"
+    },
+    {
+      "path": "run.cmd",
+      "accessCount": 1,
+      "lastAccessed": 1780572128821,
+      "type": "file"
+    },
+    {
+      "path": "models\\protonx-legal-tc\\config.json",
+      "accessCount": 1,
+      "lastAccessed": 1780572143582,
+      "type": "file"
+    },
+    {
+      "path": "models\\protonx-legal-tc\\README.md",
+      "accessCount": 1,
+      "lastAccessed": 1780572208596,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

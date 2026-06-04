@@ -4,8 +4,8 @@ import os
 import tomllib
 
 APP_VERSION = "v2.3.1"
-APP_AUTHOR = "Nguyễn Phước Thịnh"
-PROJECT_URL = "https://github.com/th1nhhdk/local_ai_ocr"
+APP_AUTHOR = "Nguyễn Phước Thịnh, Bùi Đức Trí"
+PROJECT_URL = "https://github.com/TRIBUI106/AI-extract-data"
 
 # Windows-specific feature
 WIN_TASKBAR_PROGRESS_SUPPORT = sys.platform == "win32"
