@@ -396,14 +396,19 @@ class MainWindow(QMainWindow):
     @Slot(list)
     def initiate_processing(self, queue):
         self.set_processing_state(True)
-        self._set_status("Đang kiểm tra kết nối Ollama...")
-
         self._pending_queue = queue
         self._pending_pid = self.combo_prompts.currentData()
 
-        self.precheck_worker = PreCheckWorker(self.client, config.OLLAMA_MODEL)
-        self.precheck_worker.finished.connect(self.on_precheck_finished)
-        self.precheck_worker.start()
+        if config.USE_PADDLE_OCR:
+            # PaddleOCR mode: skip Ollama precheck, start immediately
+            prompt_template = config.PROMPTS.get(self._pending_pid, config.PROMPTS[config.DEFAULT_PROMPT])
+            self.start_processing(self._pending_queue, prompt_template, config.OLLAMA_MODEL, self._pending_pid)
+        else:
+            # Ollama OCR mode: check connection + model before starting
+            self._set_status("Đang kiểm tra kết nối Ollama...")
+            self.precheck_worker = PreCheckWorker(self.client, config.OLLAMA_MODEL)
+            self.precheck_worker.finished.connect(self.on_precheck_finished)
+            self.precheck_worker.start()
 
     @Slot(bool, str, str)
     def on_precheck_finished(self, success, error_type, error_msg):

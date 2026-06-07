@@ -8,9 +8,13 @@
 # - Output: plain UTF-8 text with lines joined by newlines
 
 import io
+import os
 import numpy as np
 from PIL import Image
 import config
+
+# Disable OneDNN (MKL-DNN) — causes ConvertPirAttribute crash on paddlepaddle 3.x
+os.environ.setdefault("FLAGS_use_mkldnn", "0")
 
 _ocr_instance = None
 
@@ -22,7 +26,7 @@ def _get_ocr():
         from paddleocr import PaddleOCR  # deferred import keeps app startup fast
         _ocr_instance = PaddleOCR(
             lang=config.PADDLE_OCR_LANG,
-            use_textline_orientation=True,   # handles rotated text lines
+            use_textline_orientation=True,
             use_doc_orientation_classify=False,
             use_doc_unwarping=False,
         )

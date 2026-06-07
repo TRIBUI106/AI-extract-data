@@ -17,7 +17,9 @@ CONFIG_TOML_PATH = os.path.join(os.path.dirname(__file__), "..", "config.toml")
 # Default values
 DEFAULT_OLLAMA_IP = "http://127.0.0.1"
 DEFAULT_OLLAMA_PORT = "11435"
-DEFAULT_OLLAMA_MODEL = "deepseek-ocr:3b"
+# When USE_PADDLE_OCR=True, Ollama is only used for field extraction (qwen3:4b).
+# When USE_PADDLE_OCR=False, Ollama drives OCR (deepseek-ocr:3b).
+DEFAULT_OLLAMA_MODEL = "qwen3:4b"
 
 
 def load_user_config():
