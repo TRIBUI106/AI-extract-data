@@ -84,3 +84,12 @@ PROMPTS = {
 }
 
 DEFAULT_PROMPT = "p_markdown"
+
+# --- PaddleOCR v5 settings ---
+# Set to True to use PaddleOCR instead of the Ollama/DeepSeek-OCR backend.
+USE_PADDLE_OCR = True
+
+# BCP-47 language code passed to PaddleOCR.
+# 'vi' = Vietnamese (includes Latin + diacritics).
+# Other common values: 'en', 'ch' (Simplified Chinese), 'japan', 'korean'.
+PADDLE_OCR_LANG = "vi"

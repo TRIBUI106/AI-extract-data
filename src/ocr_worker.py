@@ -254,3 +254,86 @@ class OCRWorker(QThread):
     def stop(self):
         # Request the worker to stop processing (checked between images)
         self.is_running = False
+
+
+class PaddleOCRWorker(QThread):
+    """
+    Worker thread that processes a queue of images through PaddleOCR v5.
+
+    Emits the same signals as OCRWorker so it can be used as a drop-in
+    replacement in the UI layer. Because PaddleOCR does not produce true
+    token-level streaming, text is yielded line-by-line from the service.
+
+    Signals:
+    - stream_chunk:    Emits one recognised text line at a time
+    - image_started:   Emits when starting to process a new image
+    - image_finished:  Emits when done with an image (includes duration in s)
+    - finished_all:    Emits when the entire queue is processed
+    - error_occurred:  Emits error messages
+    - box_detected:    Not used by PaddleOCR; kept for interface compatibility
+    """
+    stream_chunk    = Signal(str)
+    image_started   = Signal(str, int)
+    image_finished  = Signal(str, float)
+    finished_all    = Signal()
+    error_occurred  = Signal(str)
+    box_detected    = Signal(list)   # compatibility stub — never emitted
+
+    def __init__(self, queue_items):
+        """
+        Args:
+            queue_items: list of (display_name, filepath, page_index) tuples,
+                         identical format to OCRWorker.queue_items.
+                         page_index == -1 means a plain image file;
+                         page_index >= 0 means a PDF page (0-based).
+        """
+        super().__init__()
+        self.queue_items = queue_items
+        self.is_running = True
+
+    def run(self):
+        # Deferred import so PaddleOCR is only loaded when this worker is used.
+        from paddle_ocr_service import ocr_image_bytes_stream
+
+        try:
+            for i, (display_name, filepath, page_index) in enumerate(self.queue_items):
+                if not self.is_running:
+                    break
+
+                self.image_started.emit(display_name, i)
+                start_time = time.time()
+
+                try:
+                    if page_index == -1:
+                        img_bytes = file_handler.get_image_bytes(filepath)
+                    else:
+                        img_bytes = file_handler.extract_pdf_page_bytes(filepath, page_index)
+                except Exception as e:
+                    self.error_occurred.emit(f"Failed to load {display_name}: {e}")
+                    continue
+
+                try:
+                    for chunk in ocr_image_bytes_stream(img_bytes):
+                        if not self.is_running:
+                            break
+                        if chunk:
+                            self.stream_chunk.emit(chunk)
+                except Exception as e:
+                    self.error_occurred.emit(f"OCR failed for {display_name}: {e}")
+
+                duration = time.time() - start_time
+                del img_bytes  # free RAM immediately
+
+                if not self.is_running:
+                    break
+
+                self.image_finished.emit(display_name, duration)
+
+            self.finished_all.emit()
+
+        except Exception as e:
+            self.error_occurred.emit(str(e))
+
+    def stop(self):
+        # Request the worker to stop (checked between images and chunks).
+        self.is_running = False

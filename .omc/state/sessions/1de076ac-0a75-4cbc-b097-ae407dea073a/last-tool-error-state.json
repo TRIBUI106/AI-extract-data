@@ -1,0 +1,7 @@
+{
+  "tool_name": "PowerShell",
+  "tool_input_preview": "{\"command\":\"cd \\\"D:\\\\Code\\\\AI-extract\\\"; python\\\\python.exe -m pip install transformers sentencepiece torch --index-url https://download.pytorch.org/whl/cpu 2>&1 | Select-String -Pattern \\\"Successfull...",
+  "error": "Exit code 1\nERROR: Could not find a version that satisfies the requirement transformers (from versions: none)\r\nERROR: No matching distribution found for transformers",
+  "timestamp": "2026-06-07T06:43:50.344Z",
+  "retry_count": 1
+}

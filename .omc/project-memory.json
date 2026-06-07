@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1780571216343,
-  "projectRoot": "D:\\Code\\AI-extract-data",
+  "lastScanned": 1780802339064,
+  "projectRoot": "D:\\Code\\AI-extract",
   "techStack": {
     "languages": [
       {
@@ -49,7 +49,7 @@
       "path": "assets",
       "purpose": "Static assets",
       "fileCount": 2,
-      "lastAccessed": 1780571216320,
+      "lastAccessed": 1780802338970,
       "keyFiles": [
         "screenshot_v2.2.png",
         "screenshot_v2.2_en.png"
@@ -59,7 +59,7 @@
       "path": "bin",
       "purpose": "Executable scripts",
       "fileCount": 2,
-      "lastAccessed": 1780571216321,
+      "lastAccessed": 1780802338971,
       "keyFiles": [
         "wget.exe"
       ]
@@ -68,7 +68,7 @@
       "path": "demo",
       "purpose": null,
       "fileCount": 3,
-      "lastAccessed": 1780571216322,
+      "lastAccessed": 1780802338971,
       "keyFiles": [
         "demo1.png",
         "demo2.pdf",
@@ -79,14 +79,14 @@
       "path": "models",
       "purpose": "Data models",
       "fileCount": 0,
-      "lastAccessed": 1780571216323,
+      "lastAccessed": 1780802338973,
       "keyFiles": []
     },
     "ollama": {
       "path": "ollama",
       "purpose": null,
       "fileCount": 2,
-      "lastAccessed": 1780571216323,
+      "lastAccessed": 1780802338975,
       "keyFiles": [
         "ollama.exe",
         "vc_redist.x64.exe"
@@ -96,7 +96,7 @@
       "path": "python",
       "purpose": null,
       "fileCount": 34,
-      "lastAccessed": 1780571216323,
+      "lastAccessed": 1780802338975,
       "keyFiles": [
         "libcrypto-3.dll",
         "libffi-8.dll",
@@ -109,7 +109,7 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 8,
-      "lastAccessed": 1780571216324,
+      "lastAccessed": 1780802338976,
       "keyFiles": [
         "config.py",
         "file_handler.py",
@@ -122,142 +122,244 @@
       "path": "ollama\\lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1780571216325,
+      "lastAccessed": 1780802338979,
       "keyFiles": []
     },
     "python\\Lib": {
       "path": "python\\Lib",
       "purpose": "Library code",
       "fileCount": 0,
-      "lastAccessed": 1780571216325,
+      "lastAccessed": 1780802338980,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
       "path": "src\\ui\\main_window.py",
-      "accessCount": 2,
-      "lastAccessed": 1780571320099,
+      "accessCount": 11,
+      "lastAccessed": 1780810853947,
       "type": "file"
     },
     {
-      "path": "src\\ocr_worker.py",
-      "accessCount": 2,
-      "lastAccessed": 1780571771257,
-      "type": "file"
-    },
-    {
-      "path": "src\\ollama_service.py",
-      "accessCount": 2,
-      "lastAccessed": 1780571771807,
-      "type": "file"
-    },
-    {
-      "path": "config.toml",
-      "accessCount": 2,
-      "lastAccessed": 1780571892977,
-      "type": "file"
-    },
-    {
-      "path": "src\\config.py",
-      "accessCount": 2,
-      "lastAccessed": 1780571893062,
-      "type": "file"
-    },
-    {
-      "path": "README.md",
-      "accessCount": 1,
-      "lastAccessed": 1780571303952,
-      "type": "file"
-    },
-    {
-      "path": "src\\main.py",
-      "accessCount": 1,
-      "lastAccessed": 1780571306417,
-      "type": "file"
-    },
-    {
-      "path": "src\\file_handler.py",
-      "accessCount": 1,
-      "lastAccessed": 1780571306899,
-      "type": "file"
-    },
-    {
-      "path": "src\\ui\\control_panel.py",
-      "accessCount": 1,
-      "lastAccessed": 1780571309434,
+      "path": "src\\field_extractor.py",
+      "accessCount": 9,
+      "lastAccessed": 1780810646342,
       "type": "file"
     },
     {
       "path": "src\\ui\\output_panel.py",
-      "accessCount": 1,
-      "lastAccessed": 1780571309598,
+      "accessCount": 8,
+      "lastAccessed": 1780810819804,
       "type": "file"
     },
     {
-      "path": "requirements.txt",
-      "accessCount": 1,
-      "lastAccessed": 1780571309705,
+      "path": "src\\ui\\control_panel.py",
+      "accessCount": 7,
+      "lastAccessed": 1780806779244,
       "type": "file"
     },
     {
-      "path": "src\\ui\\dialogs.py",
+      "path": "src\\ocr_worker.py",
+      "accessCount": 7,
+      "lastAccessed": 1780810810783,
+      "type": "file"
+    },
+    {
+      "path": "src\\config.py",
+      "accessCount": 6,
+      "lastAccessed": 1780810656937,
+      "type": "file"
+    },
+    {
+      "path": "src\\style.qss",
+      "accessCount": 6,
+      "lastAccessed": 1780813386955,
+      "type": "file"
+    },
+    {
+      "path": "test_field_extractor_debug.py",
+      "accessCount": 5,
+      "lastAccessed": 1780808686088,
+      "type": "file"
+    },
+    {
+      "path": "test_extract.py",
+      "accessCount": 4,
+      "lastAccessed": 1780803577383,
+      "type": "file"
+    },
+    {
+      "path": "debug_raw_response.txt",
+      "accessCount": 4,
+      "lastAccessed": 1780809672340,
+      "type": "file"
+    },
+    {
+      "path": "src\\ollama_service.py",
+      "accessCount": 3,
+      "lastAccessed": 1780806348897,
+      "type": "file"
+    },
+    {
+      "path": "test_field_extractor.py",
+      "accessCount": 3,
+      "lastAccessed": 1780810425471,
+      "type": "file"
+    },
+    {
+      "path": "src\\file_handler.py",
+      "accessCount": 2,
+      "lastAccessed": 1780806318636,
+      "type": "file"
+    },
+    {
+      "path": "demo_output.json",
+      "accessCount": 2,
+      "lastAccessed": 1780806349062,
+      "type": "file"
+    },
+    {
+      "path": "src\\i18n\\vi.json",
+      "accessCount": 2,
+      "lastAccessed": 1780806740698,
+      "type": "file"
+    },
+    {
+      "path": "src\\i18n\\en.json",
+      "accessCount": 2,
+      "lastAccessed": 1780806744960,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI~1\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\bitcvu7vm.output",
+      "accessCount": 2,
+      "lastAccessed": 1780809736761,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI106\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\bof7rz0mz.output",
+      "accessCount": 2,
+      "lastAccessed": 1780810381439,
+      "type": "file"
+    },
+    {
+      "path": "src\\paddle_ocr_service.py",
+      "accessCount": 2,
+      "lastAccessed": 1780810645728,
+      "type": "file"
+    },
+    {
+      "path": "src\\text_corrector.py",
+      "accessCount": 2,
+      "lastAccessed": 1780810646603,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 2,
+      "lastAccessed": 1780810794891,
+      "type": "directory"
+    },
+    {
+      "path": "",
+      "accessCount": 2,
+      "lastAccessed": 1780814217813,
+      "type": "directory"
+    },
+    {
+      "path": "src\\main.py",
       "accessCount": 1,
-      "lastAccessed": 1780571313433,
+      "lastAccessed": 1780802909293,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI106\\.claude\\plugins\\cache\\ui-ux-pro-max-skill\\ui-ux-pro-max\\2.5.0\\src\\ui-ux-pro-max\\data\\colors.csv",
+      "accessCount": 1,
+      "lastAccessed": 1780806291381,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI106\\.claude\\plugins\\cache\\ui-ux-pro-max-skill\\ui-ux-pro-max\\2.5.0\\src\\ui-ux-pro-max\\data\\typography.csv",
+      "accessCount": 1,
+      "lastAccessed": 1780806291881,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI106\\.claude\\plugins\\cache\\ui-ux-pro-max-skill\\ui-ux-pro-max\\2.5.0\\src\\ui-ux-pro-max\\data\\styles.csv",
+      "accessCount": 1,
+      "lastAccessed": 1780806292245,
       "type": "file"
     },
     {
       "path": "src\\ui\\settings_dialog.py",
       "accessCount": 1,
-      "lastAccessed": 1780571313561,
+      "lastAccessed": 1780806371276,
       "type": "file"
     },
     {
-      "path": "README_en.md",
+      "path": "src\\ui\\dialogs.py",
       "accessCount": 1,
-      "lastAccessed": 1780571313972,
+      "lastAccessed": 1780806377585,
       "type": "file"
     },
     {
-      "path": "src\\i18n\\en.json",
+      "path": "src\\extraction_pipeline.py",
       "accessCount": 1,
-      "lastAccessed": 1780571316446,
+      "lastAccessed": 1780806415917,
       "type": "file"
+    },
+    {
+      "path": "src\\i18n",
+      "accessCount": 1,
+      "lastAccessed": 1780806436688,
+      "type": "directory"
     },
     {
       "path": "src\\ui",
       "accessCount": 1,
-      "lastAccessed": 1780571317076,
+      "lastAccessed": 1780806771804,
       "type": "directory"
     },
     {
-      "path": "src",
+      "path": "python\\Lib\\site-packages\\paddlex\\inference\\pipelines\\ocr\\result.py",
       "accessCount": 1,
-      "lastAccessed": 1780571320559,
-      "type": "directory"
-    },
-    {
-      "path": "src\\lang_handler.py",
-      "accessCount": 1,
-      "lastAccessed": 1780571322996,
+      "lastAccessed": 1780808056304,
       "type": "file"
     },
     {
-      "path": "run.cmd",
+      "path": "C:\\Users\\TRIBUI~1\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\b54suenlf.output",
       "accessCount": 1,
-      "lastAccessed": 1780572128821,
+      "lastAccessed": 1780809668075,
       "type": "file"
     },
     {
-      "path": "models\\protonx-legal-tc\\config.json",
+      "path": "C:\\Users\\TRIBUI~1\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\bdbfv12nw.output",
       "accessCount": 1,
-      "lastAccessed": 1780572143582,
+      "lastAccessed": 1780810204615,
       "type": "file"
     },
     {
-      "path": "models\\protonx-legal-tc\\README.md",
+      "path": "PRODUCT.md",
       "accessCount": 1,
-      "lastAccessed": 1780572208596,
+      "lastAccessed": 1780813164831,
+      "type": "file"
+    },
+    {
+      "path": "DESIGN.md",
+      "accessCount": 1,
+      "lastAccessed": 1780813182021,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI106\\.claude\\skills\\impeccable\\reference\\product.md",
+      "accessCount": 1,
+      "lastAccessed": 1780813221444,
+      "type": "file"
+    },
+    {
+      "path": "check_qss.py",
+      "accessCount": 1,
+      "lastAccessed": 1780813456465,
       "type": "file"
     }
   ],
