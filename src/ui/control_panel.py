@@ -224,20 +224,27 @@ class ControlPanel(QWidget):
         self.add_pdf_files(files)
 
     def add_pdf_files(self, filepaths):
+        from page_selector import select_pages
         for f in filepaths:
             try:
                 count = file_handler.get_pdf_page_count(f)
                 base_name = os.path.basename(f)
-                start_p, end_p = 1, count
 
-                if count >= 2:
-                    dlg = PageRangeDialog(base_name, count, self.t, self)
-                    if dlg.exec() == QDialog.Accepted:
-                        start_p, end_p = dlg.get_range()
-                    else:
-                        continue
+                if config.USE_PADDLE_OCR and count >= 2:
+                    # Auto-select: page 1 + closing pages (seal/signature)
+                    selected = select_pages(f, count)
+                else:
+                    # Manual range dialog for Ollama mode or single-page PDFs
+                    start_p, end_p = 1, count
+                    if count >= 2:
+                        dlg = PageRangeDialog(base_name, count, self.t, self)
+                        if dlg.exec() == QDialog.Accepted:
+                            start_p, end_p = dlg.get_range()
+                        else:
+                            continue
+                    selected = list(range(start_p - 1, end_p))
 
-                for i in range(start_p - 1, end_p):
+                for i in selected:
                     name = f"{base_name} :P{i+1}"
                     self.image_queue.append((name, f, i))
                     self.list_widget.addItem(name)
