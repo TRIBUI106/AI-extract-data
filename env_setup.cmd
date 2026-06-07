@@ -94,19 +94,24 @@ if exist "%PYTHON_DIR%\Scripts\pip.exe" (
 )
 
 @REM ============================================================
-@REM 4. INSTALL REQUI@REMENTS
+@REM 4. INSTALL REQUIREMENTS
 @REM ============================================================
 echo [4/6] Installing requirements...
-@REM Pip handles partially installed packages automatically.
-if exist "%SCRIPTROOT%requirements.txt" (
-    "%PYTHON_BIN%" -m pip install -r "%SCRIPTROOT%requirements.txt" --no-warn-script-location
-    if !errorlevel! neq 0 goto :ERROR_PIP
-) else (
-    echo.
+
+if not exist "%SCRIPTROOT%requirements.txt" (
     echo FATAL: Cannot find requirements.txt
     pause
     exit /b 1
 )
+
+@REM Install main requirements
+"%PYTHON_BIN%" -m pip install -r "%SCRIPTROOT%requirements.txt" --no-warn-script-location
+if !errorlevel! neq 0 goto :ERROR_PIP
+
+@REM torch CPU-only must be installed from PyTorch's own index
+echo Installing torch (CPU-only)...
+"%PYTHON_BIN%" -m pip install torch --index-url https://download.pytorch.org/whl/cpu --no-warn-script-location
+if !errorlevel! neq 0 goto :ERROR_PIP
 
 @REM ============================================================
 @REM 5. DOWNLOAD Ollama
@@ -178,14 +183,15 @@ if exist "%OLLAMA_BIN%" (
 @REM ============================================================
 @REM 6. DOWNLOAD MODEL
 @REM ============================================================
-echo [6/6] Downloading DeepSeek-OCR Model...
+echo [6/6] Downloading qwen3:4b (field extraction model)...
 
 echo Starting Ollama...
+set "OLLAMA_MODELS=%OLLAMA_MODELS%"
 start /B "" "%OLLAMA_BIN%" serve >nul 2>&1
 timeout /t 3 /nobreak >nul
 
-echo Downloading deepseek-ocr:3b (FP16)...
-"%OLLAMA_BIN%" pull deepseek-ocr:3b
+echo Downloading qwen3:4b...
+"%OLLAMA_BIN%" pull qwen3:4b
 if !errorlevel! neq 0 (
     taskkill /F /IM ollama.exe >nul 2>&1
     echo.
