@@ -27,6 +27,11 @@ set "OLLAMA_BIN=%OLLAMA_DIR%\ollama.exe"
 set "OLLAMA_HOST=http://127.0.0.1:11435"
 set "OLLAMA_MODELS=%SCRIPTROOT%models"
 
+@REM Model cache dirs — keep everything in project, not user profile
+set "PADDLE_PDX_CACHE_HOME=%SCRIPTROOT%models\paddlex"
+set "HF_HOME=%SCRIPTROOT%models\huggingface"
+set "TRANSFORMERS_CACHE=%SCRIPTROOT%models\huggingface\hub"
+
 @REM ============================================================
 @REM 1. CHECK & INSTALL PYTHON
 @REM ============================================================
@@ -121,7 +126,7 @@ if !errorlevel! neq 0 goto :ERROR_PIP
 @REM ============================================================
 @REM 5. DOWNLOAD Ollama
 @REM ============================================================
-echo [5/6] Downloading Ollama...
+echo [5/7] Downloading Ollama...
 if exist "%OLLAMA_BIN%" (
     echo - Ollama found in %OLLAMA_DIR%. Skipping download.
 ) else (
@@ -186,9 +191,46 @@ if exist "%OLLAMA_BIN%" (
 )
 
 @REM ============================================================
-@REM 6. DOWNLOAD MODEL
+@REM 6. DOWNLOAD AI MODELS (PaddleOCR-VL + ProtonX)
 @REM ============================================================
-echo [6/6] Downloading qwen3:4b (field extraction model)...
+echo [6/7] Downloading AI models (PaddleOCR-VL-1.5 + ProtonX)...
+
+@REM Create model dirs
+if not exist "%SCRIPTROOT%models\paddlex" mkdir "%SCRIPTROOT%models\paddlex"
+if not exist "%SCRIPTROOT%models\huggingface" mkdir "%SCRIPTROOT%models\huggingface"
+
+@REM Check if PaddleOCR-VL-1.5 already downloaded
+if exist "%SCRIPTROOT%models\paddlex\official_models\PaddleOCR-VL-1.5\model.safetensors" (
+    echo - PaddleOCR-VL-1.5 found. Skipping.
+) else (
+    echo - Downloading PaddleOCR-VL-1.5 and layout models ^(~2GB^)...
+    "%PYTHON_BIN%" -c "import os; os.environ['PADDLEX_HOME']=r'%SCRIPTROOT%models\paddlex'; from paddleocr import PaddleOCRVL; PaddleOCRVL(pipeline_version='v1.5', use_doc_orientation_classify=False, use_doc_unwarping=False, device='cpu')" --no-warn-script-location
+    if !errorlevel! neq 0 (
+        echo FATAL: PaddleOCR-VL-1.5 download failed.
+        pause
+        exit /b 1
+    )
+    echo - PaddleOCR-VL-1.5 downloaded.
+)
+
+@REM Check if ProtonX already downloaded
+if exist "%SCRIPTROOT%models\huggingface\hub\models--protonx-models--protonx-legal-tc\snapshots" (
+    echo - ProtonX model found. Skipping.
+) else (
+    echo - Downloading ProtonX legal-tc ^(~300MB^)...
+    "%PYTHON_BIN%" -c "import os; os.environ['HF_HOME']=r'%SCRIPTROOT%models\huggingface'; os.environ['TRANSFORMERS_CACHE']=r'%SCRIPTROOT%models\huggingface\hub'; from transformers import AutoTokenizer, AutoModelForSeq2SeqLM; AutoTokenizer.from_pretrained('protonx-models/protonx-legal-tc'); AutoModelForSeq2SeqLM.from_pretrained('protonx-models/protonx-legal-tc')" --no-warn-script-location
+    if !errorlevel! neq 0 (
+        echo FATAL: ProtonX model download failed.
+        pause
+        exit /b 1
+    )
+    echo - ProtonX downloaded.
+)
+
+@REM ============================================================
+@REM 7. DOWNLOAD OLLAMA MODEL (qwen3:4b)
+@REM ============================================================
+echo [7/7] Downloading qwen3:4b (field extraction model)...
 
 echo Starting Ollama...
 set "OLLAMA_MODELS=%OLLAMA_MODELS%"
