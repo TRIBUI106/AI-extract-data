@@ -1,26 +1,38 @@
 {
   "version": 1,
   "entries": {
-    "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
-      "last_emitted_at_ms": 1780814217360,
-      "message": "Combine searches in parallel when investigating multiple patterns."
-    },
     "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
-      "last_emitted_at_ms": 1780813217940,
+      "last_emitted_at_ms": 1780818825328,
       "message": "Read multiple files in parallel when possible for faster analysis."
     },
+    "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
+      "last_emitted_at_ms": 1780818448131,
+      "message": "Combine searches in parallel when investigating multiple patterns."
+    },
     "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
-      "last_emitted_at_ms": 1780813164645,
+      "last_emitted_at_ms": 1780818419333,
       "message": "Verify changes work after editing. Test functionality before marking complete."
     },
-    "fd6051d03f475ac5a135d4215d84f22a5be66f752e67d55fb415cb350eff035c": {
-      "last_emitted_at_ms": 1780813147529,
-      "message": "Spawning agent: oh-my-claudecode:executor (inherit) | Task: Teach impeccable context for AI-extract app"
+    "d41eb7b1d6679eda22c3ab559903bbec3a1600c9a811cf14564b1e8e22ed5b94": {
+      "last_emitted_at_ms": 1780818181460,
+      "message": "Spawning agent: general-purpose (inherit) | Task: Research PaddleOCR-VL from GitHub"
     },
     "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1780810858984,
+      "last_emitted_at_ms": 1780817999812,
       "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "1503ab4e265551d645dd01c2bc2c1922c8b5cacc9292635c31cd1f7d6453d8b5": {
+      "last_emitted_at_ms": 1780817888772,
+      "message": "Spawning agent: general-purpose (inherit) | Task: Web search PaddleOCR-VL v1.5"
+    },
+    "df4a5edbe397734e35d7c6bab6183d205210807af12ea2bf3799ef46405cbf91": {
+      "last_emitted_at_ms": 1780817667967,
+      "message": "Spawning agent: Explore (inherit) | Task: Research PaddleOCR-VL v1.5 API"
+    },
+    "808cb04420bcb368ab4716038ddd950b51198d0402b6cf8e965d66ca42ebccbe": {
+      "last_emitted_at_ms": 1780815801341,
+      "message": "[SLOP WARNING] Detected fallback/workaround language in this tool input. Do not make potential slop: avoid ad-hoc fallback layers, workaround shims, or environment-specific patches unless explicitly justified. For architecture concerns, consult the architect for a concrete design first. If this seems environment-specific, ask the user to confirm constraints before proceeding.\n\nVerify changes work after editing. Test functionality before marking complete."
     }
   },
-  "updated_at": "2026-06-07T06:36:57.360Z"
+  "updated_at": "2026-06-07T07:53:45.328Z"
 }

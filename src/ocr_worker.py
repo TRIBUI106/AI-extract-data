@@ -258,12 +258,12 @@ class OCRWorker(QThread):
 
 class PaddleOCRWorker(QThread):
     """
-    Worker thread: PaddleOCR v5 → ProtonX correction → emit text.
+    Worker thread: PaddleOCR-VL v1.5 → ProtonX correction → emit text.
 
     Flow per page:
-      1. Render image bytes
-      2. PaddleOCR → raw text (all lines joined)
-      3. ProtonX legal-tc → corrected text
+      1. Render image bytes (PNG/JPEG) from file_handler
+      2. PaddleOCR-VL v1.5 → raw markdown/text
+      3. ProtonX legal-tc → corrected text (falls back to raw on error)
       4. Emit corrected text line-by-line via stream_chunk
 
     Signals:
@@ -272,7 +272,7 @@ class PaddleOCRWorker(QThread):
     - image_finished:  Emits when done (display_name, duration_seconds)
     - finished_all:    Emits when entire queue is processed
     - error_occurred:  Emits error messages
-    - status_update:   Short status string for the status bar ("OCR...", "Sửa lỗi...")
+    - status_update:   Short status string for the status bar
     - box_detected:    Compatibility stub, never emitted
     """
     stream_chunk    = Signal(str)

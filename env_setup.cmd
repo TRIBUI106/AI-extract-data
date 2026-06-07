@@ -104,8 +104,13 @@ if not exist "%SCRIPTROOT%requirements.txt" (
     exit /b 1
 )
 
-@REM Install main requirements
+@REM Install main requirements (includes paddleocr[doc-parser] for VL-1.5)
 "%PYTHON_BIN%" -m pip install -r "%SCRIPTROOT%requirements.txt" --no-warn-script-location
+if !errorlevel! neq 0 goto :ERROR_PIP
+
+@REM paddlepaddle CPU build from official index
+echo Installing paddlepaddle (CPU)...
+"%PYTHON_BIN%" -m pip install paddlepaddle==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/ --no-warn-script-location
 if !errorlevel! neq 0 goto :ERROR_PIP
 
 @REM torch CPU-only must be installed from PyTorch's own index

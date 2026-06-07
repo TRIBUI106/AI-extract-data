@@ -14,9 +14,9 @@ PyMuPDF==1.27.2.3
 # Markdown rendering
 Markdown==3.10.2
 
-# OCR engine
-paddleocr==3.6.0
-paddlepaddle==3.3.1
+# OCR engine — PaddleOCR-VL v1.5 document parser
+paddleocr[doc-parser]==3.6.0
+paddlepaddle==3.2.1
 
 # Vietnamese OCR text correction (protonx-models/protonx-legal-tc)
 transformers==5.10.2

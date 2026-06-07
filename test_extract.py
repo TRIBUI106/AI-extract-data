@@ -38,7 +38,7 @@ def main():
     print("-" * 60)
 
     # Use the exact prompts from config.py (deepseek-ocr requires specific format)
-    prompt = config.PROMPTS["p_ocr"]  # "<|grounding|>OCR this image."
+    prompt = config.PROMPTS["p_freeocr"]  # "Free OCR." - simplest, no grounding tags
 
     print("AI OUTPUT:")
     print("-" * 60)

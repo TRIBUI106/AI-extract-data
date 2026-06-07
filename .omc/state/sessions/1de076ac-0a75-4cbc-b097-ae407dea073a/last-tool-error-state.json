@@ -1,7 +1,7 @@
 {
   "tool_name": "PowerShell",
-  "tool_input_preview": "{\"command\":\"cd \\\"D:\\\\Code\\\\AI-extract\\\"; python\\\\python.exe -m pip install transformers sentencepiece torch --index-url https://download.pytorch.org/whl/cpu 2>&1 | Select-String -Pattern \\\"Successfull...",
-  "error": "Exit code 1\nERROR: Could not find a version that satisfies the requirement transformers (from versions: none)\r\nERROR: No matching distribution found for transformers",
-  "timestamp": "2026-06-07T06:43:50.344Z",
+  "tool_input_preview": "{\"command\":\"cd D:\\\\Code\\\\AI-extract; .\\\\python\\\\python.exe -c \\\"\\nfrom paddleocr import PaddleOCRVL\\np = PaddleOCRVL(pipeline_version='v1.5', use_doc_orientation_classify=False, use_doc_unwarping=Fals...",
+  "error": "Exit code 1\n    ...<4 lines>...\r\n    )\r\n  File \"D:\\Code\\AI-extract\\python\\Lib\\site-packages\\paddlex\\inference\\models\\doc_vlm\\modeling\\paddleocr_vl\\_fusion_ops\\__init__.py\", line 19, in <module>\r\n    from paddle.incubate.nn.functional import fused_rms_norm_ext\r\nImportError: cannot import name 'fused_rms_norm_ext' from 'paddle.incubate.nn.functional' (D:\\Code\\AI-extract\\python\\Lib\\site-packages\\paddle\\incubate\\nn\\functional\\__init__.py)",
+  "timestamp": "2026-06-07T07:55:47.491Z",
   "retry_count": 1
 }

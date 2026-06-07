@@ -1,104 +1,114 @@
 # src/paddle_ocr_service.py
-# Wraps PaddleOCR v5 (paddleocr 3.6.x / paddlepaddle 3.x) for use in the app.
+# Wraps PaddleOCR-VL v1.5 (paddleocr[doc-parser]) for document/PDF OCR.
 #
 # Key design decisions:
-# - Singleton OCR instance: model weights are loaded once at first call, then
-#   reused for every subsequent image. Avoids multi-second re-init per page.
-# - Input: raw PNG/JPEG bytes as produced by file_handler.py
-# - Output: plain UTF-8 text with lines joined by newlines
+# - Singleton pipeline: model weights loaded once, reused for every page.
+# - Input: raw PNG/JPEG bytes from file_handler.py, written to a temp file
+#   because PaddleOCRVL.predict() accepts a file path, not raw bytes.
+# - Output: plain UTF-8 markdown text (VL outputs richer structure than
+#   the classic rec_texts list).
 
 import io
 import os
-import numpy as np
-from PIL import Image
+import tempfile
+
 import config
 
-# Disable OneDNN (MKL-DNN) — causes ConvertPirAttribute crash on paddlepaddle 3.x
-os.environ.setdefault("FLAGS_use_mkldnn", "0")
-
-_ocr_instance = None
+_pipeline_instance = None
 
 
-def _get_ocr():
-    """Return (and lazily initialise) the singleton PaddleOCR instance."""
-    global _ocr_instance
-    if _ocr_instance is None:
-        from paddleocr import PaddleOCR  # deferred import keeps app startup fast
-        _ocr_instance = PaddleOCR(
-            lang=config.PADDLE_OCR_LANG,
-            use_textline_orientation=True,
+def _get_pipeline():
+    """Return (and lazily initialise) the singleton PaddleOCRVL pipeline."""
+    global _pipeline_instance
+    if _pipeline_instance is None:
+        from paddleocr import PaddleOCRVL  # deferred import keeps startup fast
+        _pipeline_instance = PaddleOCRVL(
+            pipeline_version="v1.5",
             use_doc_orientation_classify=False,
             use_doc_unwarping=False,
+            device="cpu",
         )
-    return _ocr_instance
+    return _pipeline_instance
 
 
-def _img_bytes_to_numpy(img_bytes: bytes) -> np.ndarray:
-    """Convert raw image bytes to a uint8 RGB numpy array."""
-    img = Image.open(io.BytesIO(img_bytes))
-    if img.mode != "RGB":
-        img = img.convert("RGB")
-    return np.array(img)
-
-
-def _extract_text(predict_results: list) -> str:
+def _extract_markdown(result) -> str:
     """
-    Extract plain text from the list returned by PaddleOCR.predict().
+    Extract plain text from a PaddleOCRVL result object.
 
-    Each element of predict_results is an OCRResult dict-like object.
-    The recognised lines are stored in result['rec_texts'] as a list of str.
-    Lines are joined with newlines; multiple result pages (rare for a single
-    image) are separated by a blank line.
+    VL-1.5 returns a result with a .markdown property:
+      { 'markdown_texts': str, 'markdown_images': ..., 'page_continuation_flags': ... }
+
+    Falls back to iterating parsing_res_list if markdown is unavailable.
     """
-    page_texts = []
-    for result in predict_results:
-        texts = result.get("rec_texts", [])
-        page_texts.append("\n".join(t for t in texts if t))
-    return "\n\n".join(block for block in page_texts if block)
+    # Primary path: markdown output
+    try:
+        md = result.markdown
+        if isinstance(md, dict):
+            text = md.get("markdown_texts", "")
+        else:
+            text = str(md)
+        if text and text.strip():
+            return text.strip()
+    except Exception:
+        pass
+
+    # Fallback: parse the JSON result structure
+    try:
+        data = result.json
+        blocks = data.get("parsing_res_list", [])
+        lines = []
+        for block in sorted(blocks, key=lambda b: b.get("block_order", 0)):
+            content = block.get("block_content", "")
+            if content and content.strip():
+                lines.append(content.strip())
+        return "\n".join(lines)
+    except Exception:
+        pass
+
+    return ""
 
 
 def ocr_image_bytes(img_bytes: bytes) -> str:
     """
-    Run PaddleOCR on raw image bytes and return all recognised text.
+    Run PaddleOCR-VL v1.5 on raw image bytes and return recognised text.
+
+    PaddleOCRVL.predict() expects a file path, so the bytes are written to
+    a temporary file, processed, then cleaned up.
 
     Args:
         img_bytes: PNG/JPEG bytes from file_handler.py
 
     Returns:
-        Plain text string with newline-separated lines.
-        Returns empty string if nothing is recognised or on error.
+        Plain text / markdown string.  Empty string on error.
     """
+    tmp_path = None
     try:
-        ocr = _get_ocr()
-        img_array = _img_bytes_to_numpy(img_bytes)
-        results = ocr.predict(img_array)
-        return _extract_text(results)
+        # Detect format from magic bytes
+        suffix = ".jpg"
+        if img_bytes[:4] == b"\x89PNG":
+            suffix = ".png"
+
+        with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
+            tmp.write(img_bytes)
+            tmp_path = tmp.name
+
+        pipeline = _get_pipeline()
+        results = list(pipeline.predict(tmp_path))
+
+        page_texts = []
+        for res in results:
+            text = _extract_markdown(res)
+            if text:
+                page_texts.append(text)
+
+        return "\n\n".join(page_texts)
+
     except Exception as e:
         print(f"[paddle_ocr_service] ocr_image_bytes error: {e}")
         return ""
-
-
-def ocr_image_bytes_stream(img_bytes: bytes):
-    """
-    Run PaddleOCR and yield text line-by-line for streaming UI updates.
-
-    PaddleOCR v5 does not support true token streaming, so this function
-    runs the full inference once then yields each recognised line as a
-    separate chunk, mimicking streaming behaviour.
-
-    Yields:
-        str: One recognised text line at a time (with trailing newline).
-             Yields an empty string and returns immediately on error.
-    """
-    try:
-        ocr = _get_ocr()
-        img_array = _img_bytes_to_numpy(img_bytes)
-        results = ocr.predict(img_array)
-        for result in results:
-            texts = result.get("rec_texts", [])
-            for line in texts:
-                if line:
-                    yield line + "\n"
-    except Exception as e:
-        print(f"[paddle_ocr_service] ocr_image_bytes_stream error: {e}")
-        yield ""
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            try:
+                os.unlink(tmp_path)
+            except Exception:
+                pass

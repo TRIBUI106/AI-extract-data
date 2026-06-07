@@ -136,8 +136,26 @@
   "hotPaths": [
     {
       "path": "src\\ui\\main_window.py",
+      "accessCount": 16,
+      "lastAccessed": 1780816302968,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui\\output_panel.py",
+      "accessCount": 15,
+      "lastAccessed": 1780815850979,
+      "type": "file"
+    },
+    {
+      "path": "src\\ocr_worker.py",
+      "accessCount": 13,
+      "lastAccessed": 1780818431945,
+      "type": "file"
+    },
+    {
+      "path": "src\\config.py",
       "accessCount": 11,
-      "lastAccessed": 1780810853947,
+      "lastAccessed": 1780818453508,
       "type": "file"
     },
     {
@@ -147,39 +165,45 @@
       "type": "file"
     },
     {
-      "path": "src\\ui\\output_panel.py",
-      "accessCount": 8,
-      "lastAccessed": 1780810819804,
-      "type": "file"
-    },
-    {
       "path": "src\\ui\\control_panel.py",
       "accessCount": 7,
       "lastAccessed": 1780806779244,
       "type": "file"
     },
     {
-      "path": "src\\ocr_worker.py",
-      "accessCount": 7,
-      "lastAccessed": 1780810810783,
-      "type": "file"
-    },
-    {
-      "path": "src\\config.py",
-      "accessCount": 6,
-      "lastAccessed": 1780810656937,
-      "type": "file"
-    },
-    {
       "path": "src\\style.qss",
-      "accessCount": 6,
-      "lastAccessed": 1780813386955,
+      "accessCount": 7,
+      "lastAccessed": 1780815877500,
       "type": "file"
+    },
+    {
+      "path": "",
+      "accessCount": 6,
+      "lastAccessed": 1780817845843,
+      "type": "directory"
+    },
+    {
+      "path": "src\\paddle_ocr_service.py",
+      "accessCount": 6,
+      "lastAccessed": 1780818419604,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 6,
+      "lastAccessed": 1780818448406,
+      "type": "directory"
     },
     {
       "path": "test_field_extractor_debug.py",
       "accessCount": 5,
       "lastAccessed": 1780808686088,
+      "type": "file"
+    },
+    {
+      "path": "requirements.txt",
+      "accessCount": 5,
+      "lastAccessed": 1780818436417,
       "type": "file"
     },
     {
@@ -195,6 +219,12 @@
       "type": "file"
     },
     {
+      "path": "env_setup.cmd",
+      "accessCount": 4,
+      "lastAccessed": 1780818462093,
+      "type": "file"
+    },
+    {
       "path": "src\\ollama_service.py",
       "accessCount": 3,
       "lastAccessed": 1780806348897,
@@ -204,6 +234,12 @@
       "path": "test_field_extractor.py",
       "accessCount": 3,
       "lastAccessed": 1780810425471,
+      "type": "file"
+    },
+    {
+      "path": "src\\text_corrector.py",
+      "accessCount": 3,
+      "lastAccessed": 1780818384746,
       "type": "file"
     },
     {
@@ -243,33 +279,21 @@
       "type": "file"
     },
     {
-      "path": "src\\paddle_ocr_service.py",
+      "path": "config.toml",
       "accessCount": 2,
-      "lastAccessed": 1780810645728,
+      "lastAccessed": 1780816287808,
       "type": "file"
     },
     {
-      "path": "src\\text_corrector.py",
+      "path": "python\\Lib\\site-packages\\paddleocr",
       "accessCount": 2,
-      "lastAccessed": 1780810646603,
-      "type": "file"
-    },
-    {
-      "path": "src",
-      "accessCount": 2,
-      "lastAccessed": 1780810794891,
-      "type": "directory"
-    },
-    {
-      "path": "",
-      "accessCount": 2,
-      "lastAccessed": 1780814217813,
+      "lastAccessed": 1780817282237,
       "type": "directory"
     },
     {
       "path": "src\\main.py",
-      "accessCount": 1,
-      "lastAccessed": 1780802909293,
+      "accessCount": 2,
+      "lastAccessed": 1780817839065,
       "type": "file"
     },
     {
@@ -360,6 +384,36 @@
       "path": "check_qss.py",
       "accessCount": 1,
       "lastAccessed": 1780813456465,
+      "type": "file"
+    },
+    {
+      "path": "make_release.cmd",
+      "accessCount": 1,
+      "lastAccessed": 1780816042214,
+      "type": "file"
+    },
+    {
+      "path": "run.cmd",
+      "accessCount": 1,
+      "lastAccessed": 1780816042292,
+      "type": "file"
+    },
+    {
+      "path": "python\\Lib\\site-packages\\paddleocr\\_pipelines\\ocr.py",
+      "accessCount": 1,
+      "lastAccessed": 1780817285992,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI~1\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\btoqp01f3.output",
+      "accessCount": 1,
+      "lastAccessed": 1780818896294,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI~1\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\b21azdgog.output",
+      "accessCount": 1,
+      "lastAccessed": 1780819015248,
       "type": "file"
     }
   ],
