@@ -436,6 +436,7 @@ class MainWindow(QMainWindow):
         self.start_processing(self._pending_queue, prompt_template, config.OLLAMA_MODEL, self._pending_pid)
 
     def start_processing(self, queue, prompt_template, model_name, prompt_id=None):
+        self._user_stopped = False
         self.output_panel.clear()
         self.set_processing_state(True)
         self.batch_start_time = time.time()
@@ -466,9 +467,11 @@ class MainWindow(QMainWindow):
 
     def stop_processing(self):
         if self.worker and self.worker.isRunning():
+            self._user_stopped = True
             self.worker.stop()
             self.output_panel.append_text(f"\n\n=== {self.t['msg_stopped']} ===")
             self._set_status("Đã dừng bởi người dùng")
+            self.set_processing_state(False)
             if self.taskbar:
                 self.taskbar.stop_progress(int(self.winId()))
 
@@ -504,6 +507,10 @@ class MainWindow(QMainWindow):
 
     @Slot()
     def on_finished(self):
+        if getattr(self, '_user_stopped', False):
+            self._user_stopped = False
+            return
+
         self.set_processing_state(False)
         self.control_panel.update_status()
 
