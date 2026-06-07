@@ -234,6 +234,7 @@ class MainWindow(QMainWindow):
 
         # Right: output panel
         self.output_panel = OutputPanel()
+        self.output_panel.extract_requested.connect(self._on_extract_requested)
 
         outer_splitter.addWidget(self.control_panel)
         outer_splitter.addWidget(self.output_panel)
@@ -453,6 +454,8 @@ class MainWindow(QMainWindow):
         self.worker.image_started.connect(self.on_image_started)
         self.worker.image_finished.connect(self.on_image_finished)
         self.worker.finished_all.connect(self.on_finished)
+        if hasattr(self.worker, 'status_update'):
+            self.worker.status_update.connect(self._set_status)
 
         self.worker.start()
 
@@ -508,7 +511,7 @@ class MainWindow(QMainWindow):
         done = self.control_panel.progress_bar.value()
         total = self.control_panel.progress_bar.maximum()
         self._set_status(
-            f"Hoàn tất {done}/{total} trang — tổng thời gian {total_duration:.1f}s"
+            f"Hoàn tất {done}/{total} trang — nhấn \"Trích xuất fields\" để phân tích"
         )
 
         if done == total:
@@ -517,19 +520,21 @@ class MainWindow(QMainWindow):
                 self, self.t["title_done"], f"{self.t['msg_done']}\n{total_str}"
             )
 
-        # Kick off field extraction in background (uses qwen3:4b via Ollama)
-        ocr_text = self.output_panel.text_output.toPlainText().strip()
-        if ocr_text:
-            self._set_status("Đang trích xuất các trường dữ liệu...")
-            self._extraction_worker = FieldExtractionWorker(ocr_text, self.client)
-            self._extraction_worker.finished.connect(self._on_extraction_finished)
-            self._extraction_worker.start()
+    @Slot(str)
+    def _on_extract_requested(self, text: str):
+        self._set_status("Đang trích xuất các trường dữ liệu...")
+        self.output_panel.btn_extract.setEnabled(False)
+        self._extraction_worker = FieldExtractionWorker(text, self.client)
+        self._extraction_worker.finished.connect(self._on_extraction_finished)
+        self._extraction_worker.start()
 
     @Slot(dict)
     def _on_extraction_finished(self, data: dict):
+        self.output_panel.btn_extract.setEnabled(True)
         if data:
             self.output_panel.extracted_panel.populate(data)
             self.output_panel.tabs.setTabEnabled(2, True)
+            self.output_panel.tabs.setCurrentIndex(2)
         self._set_status("Sẵn sàng")
 
     # ==================== Drag and Drop ====================

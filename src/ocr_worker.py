@@ -258,42 +258,39 @@ class OCRWorker(QThread):
 
 class PaddleOCRWorker(QThread):
     """
-    Worker thread that processes a queue of images through PaddleOCR v5.
+    Worker thread: PaddleOCR v5 → ProtonX correction → emit text.
 
-    Emits the same signals as OCRWorker so it can be used as a drop-in
-    replacement in the UI layer. Because PaddleOCR does not produce true
-    token-level streaming, text is yielded line-by-line from the service.
+    Flow per page:
+      1. Render image bytes
+      2. PaddleOCR → raw text (all lines joined)
+      3. ProtonX legal-tc → corrected text
+      4. Emit corrected text line-by-line via stream_chunk
 
     Signals:
-    - stream_chunk:    Emits one recognised text line at a time
-    - image_started:   Emits when starting to process a new image
-    - image_finished:  Emits when done with an image (includes duration in s)
-    - finished_all:    Emits when the entire queue is processed
+    - stream_chunk:    Corrected text lines, one at a time
+    - image_started:   Emits when starting a new image (display_name, index)
+    - image_finished:  Emits when done (display_name, duration_seconds)
+    - finished_all:    Emits when entire queue is processed
     - error_occurred:  Emits error messages
-    - box_detected:    Not used by PaddleOCR; kept for interface compatibility
+    - status_update:   Short status string for the status bar ("OCR...", "Sửa lỗi...")
+    - box_detected:    Compatibility stub, never emitted
     """
     stream_chunk    = Signal(str)
     image_started   = Signal(str, int)
     image_finished  = Signal(str, float)
     finished_all    = Signal()
     error_occurred  = Signal(str)
-    box_detected    = Signal(list)   # compatibility stub — never emitted
+    status_update   = Signal(str)
+    box_detected    = Signal(list)
 
     def __init__(self, queue_items):
-        """
-        Args:
-            queue_items: list of (display_name, filepath, page_index) tuples,
-                         identical format to OCRWorker.queue_items.
-                         page_index == -1 means a plain image file;
-                         page_index >= 0 means a PDF page (0-based).
-        """
         super().__init__()
         self.queue_items = queue_items
         self.is_running = True
 
     def run(self):
-        # Deferred import so PaddleOCR is only loaded when this worker is used.
-        from paddle_ocr_service import ocr_image_bytes_stream
+        from paddle_ocr_service import ocr_image_bytes
+        from text_corrector import correct_text
 
         try:
             for i, (display_name, filepath, page_index) in enumerate(self.queue_items):
@@ -303,6 +300,7 @@ class PaddleOCRWorker(QThread):
                 self.image_started.emit(display_name, i)
                 start_time = time.time()
 
+                # Step 1: load image bytes
                 try:
                     if page_index == -1:
                         img_bytes = file_handler.get_image_bytes(filepath)
@@ -312,17 +310,39 @@ class PaddleOCRWorker(QThread):
                     self.error_occurred.emit(f"Failed to load {display_name}: {e}")
                     continue
 
+                # Step 2: PaddleOCR → raw text
                 try:
-                    for chunk in ocr_image_bytes_stream(img_bytes):
-                        if not self.is_running:
-                            break
-                        if chunk:
-                            self.stream_chunk.emit(chunk)
+                    self.status_update.emit(f"OCR: {display_name}")
+                    raw_text = ocr_image_bytes(img_bytes)
                 except Exception as e:
                     self.error_occurred.emit(f"OCR failed for {display_name}: {e}")
+                    del img_bytes
+                    continue
+
+                del img_bytes
+
+                if not self.is_running:
+                    break
+
+                # Step 3: ProtonX correction
+                corrected = raw_text
+                if raw_text.strip():
+                    try:
+                        self.status_update.emit(f"Sửa lỗi: {display_name}")
+                        corrected = correct_text(raw_text)
+                    except Exception as e:
+                        # Correction failed — fall back to raw text, don't abort
+                        self.error_occurred.emit(f"[ProtonX] {display_name}: {e}")
+                        corrected = raw_text
+
+                if not self.is_running:
+                    break
+
+                # Step 4: emit corrected text line-by-line
+                for line in corrected.splitlines():
+                    self.stream_chunk.emit(line + "\n")
 
                 duration = time.time() - start_time
-                del img_bytes  # free RAM immediately
 
                 if not self.is_running:
                     break

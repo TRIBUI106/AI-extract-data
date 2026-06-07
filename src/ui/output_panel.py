@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTabWidget,
                                QSizePolicy)
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEnginePage
-from PySide6.QtCore import Qt, Slot, QUrl
+from PySide6.QtCore import Qt, Slot, QUrl, Signal
 from PySide6.QtGui import QTextCursor
 
 
@@ -390,6 +390,9 @@ class ExtractedFieldsPanel(QWidget):
 
 # ==================== Main Widget ====================
 class OutputPanel(QWidget):
+    # Emitted when user clicks "Trích xuất" — carries current OCR text
+    extract_requested = Signal(str)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("output_panel_widget")
@@ -436,12 +439,19 @@ class OutputPanel(QWidget):
         self.lbl_proofread.setObjectName("lbl_proofread")
         self.lbl_proofread.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
+        self.btn_extract = QPushButton("Trích xuất fields")
+        self.btn_extract.setObjectName("btn_extract")
+        self.btn_extract.setFixedHeight(32)
+        self.btn_extract.setEnabled(False)
+        self.btn_extract.clicked.connect(self._on_extract_clicked)
+
         self.btn_copy = QPushButton()
         self.btn_copy.setObjectName("btn_copy")
         self.btn_copy.setFixedHeight(32)
         self.btn_copy.clicked.connect(self.copy_output)
 
         bottom_bar.addWidget(self.lbl_proofread, stretch=1)
+        bottom_bar.addWidget(self.btn_extract)
         bottom_bar.addWidget(self.btn_copy)
 
         main_layout.addWidget(self.tabs)
@@ -462,6 +472,11 @@ class OutputPanel(QWidget):
         current_tab_text = self.tabs.tabText(self.tabs.currentIndex())
         self.btn_copy.setText(self.t["btn_copy"].format(current_tab_text))
 
+    def _on_extract_clicked(self):
+        text = self.text_output.toPlainText().strip()
+        if text:
+            self.extract_requested.emit(text)
+
     # ==================== Tab 1: Raw Output ====================
     @Slot(str)
     def append_text(self, text):
@@ -480,17 +495,14 @@ class OutputPanel(QWidget):
 
     # ==================== Tab 2: Fancy Output ====================
     def render_fancy_output(self):
-        """Convert raw text to rendered markdown and attempt field extraction."""
+        """Render OCR text as markdown and enable the extract button."""
         raw_md = self.text_output.toPlainText()
         if not raw_md.strip():
             return
 
         self.web_view.set_markdown(raw_md)
         self.tabs.setTabEnabled(1, True)
-
-        # Attempt to populate extracted fields tab
-        extracted_ok = self.extracted_panel.try_parse_and_populate(raw_md)
-        self.tabs.setTabEnabled(2, extracted_ok)
+        self.btn_extract.setEnabled(True)
 
         # Switch to fancy tab by default
         self.tabs.setCurrentIndex(1)
@@ -503,6 +515,7 @@ class OutputPanel(QWidget):
         self.tabs.setTabEnabled(1, False)
         self.tabs.setTabEnabled(2, False)
         self.tabs.setCurrentIndex(0)
+        self.btn_extract.setEnabled(False)
 
     def copy_output(self):
         idx = self.tabs.currentIndex()

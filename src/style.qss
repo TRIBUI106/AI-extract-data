@@ -278,6 +278,30 @@ QPushButton#btn_toggle_headers:disabled {
     border-color: #262B35;
 }
 
+/* Extract fields — blue accent, manual trigger */
+QPushButton#btn_extract {
+    background-color: #1A2E54;
+    color: #90B8F8;
+    border: 1px solid #1E3560;
+    border-radius: 5px;
+    padding: 5px 14px;
+    font-size: 9.5pt;
+    font-weight: 600;
+}
+QPushButton#btn_extract:hover {
+    background-color: #1E3870;
+    border-color: #3D7EE8;
+    color: #B8D4FC;
+}
+QPushButton#btn_extract:pressed {
+    background-color: #132240;
+}
+QPushButton#btn_extract:disabled {
+    background-color: #111318;
+    color: #434957;
+    border-color: #262B35;
+}
+
 /* Copy / Copy JSON — ghost secondary */
 QPushButton#btn_copy,
 QPushButton#btn_copy_json {
