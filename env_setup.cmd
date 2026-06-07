@@ -35,7 +35,7 @@ set "TRANSFORMERS_CACHE=%SCRIPTROOT%models\huggingface\hub"
 @REM ============================================================
 @REM 1. CHECK & INSTALL PYTHON
 @REM ============================================================
-echo [1/6] Checking Python environment...
+echo [1/7] Checking Python environment...
 
 if exist "%PYTHON_BIN%" (
     echo - Python found in %PYTHON_DIR%. Skipping download.
@@ -68,14 +68,14 @@ if not exist "%PYTHON_BIN%" goto :ERROR_EXTRACT
 @REM ============================================================
 @REM 2. CONFIGURE ._pth FILE
 @REM ============================================================
-echo [2/6] Configuring %PYTHON_PTH%...
+echo [2/7] Configuring %PYTHON_PTH%...
 @REM This is safe to run repeatedly; it simply replaces the string if found.
 powershell -ExecutionPolicy Bypass -Command "(Get-Content '%PYTHON_PTH%') -replace '#import site', 'import site' | Set-Content '%PYTHON_PTH%'"
 
 @REM ============================================================
 @REM 3. INSTALL PIP
 @REM ============================================================
-echo [3/6] Checking for pip...
+echo [3/7] Checking for pip...
 
 if exist "%PYTHON_DIR%\Scripts\pip.exe" (
     echo - pip found. Skipping.
@@ -101,7 +101,7 @@ if exist "%PYTHON_DIR%\Scripts\pip.exe" (
 @REM ============================================================
 @REM 4. INSTALL REQUIREMENTS
 @REM ============================================================
-echo [4/6] Installing requirements...
+echo [4/7] Installing requirements...
 
 if not exist "%SCRIPTROOT%requirements.txt" (
     echo FATAL: Cannot find requirements.txt

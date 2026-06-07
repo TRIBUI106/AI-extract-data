@@ -136,8 +136,8 @@
   "hotPaths": [
     {
       "path": "src\\ui\\main_window.py",
-      "accessCount": 16,
-      "lastAccessed": 1780816302968,
+      "accessCount": 25,
+      "lastAccessed": 1780825030511,
       "type": "file"
     },
     {
@@ -159,9 +159,27 @@
       "type": "file"
     },
     {
+      "path": "env_setup.cmd",
+      "accessCount": 11,
+      "lastAccessed": 1780824702323,
+      "type": "file"
+    },
+    {
       "path": "src\\field_extractor.py",
       "accessCount": 9,
       "lastAccessed": 1780810646342,
+      "type": "file"
+    },
+    {
+      "path": "src",
+      "accessCount": 9,
+      "lastAccessed": 1780822544773,
+      "type": "directory"
+    },
+    {
+      "path": "requirements.txt",
+      "accessCount": 9,
+      "lastAccessed": 1780823713448,
       "type": "file"
     },
     {
@@ -178,32 +196,20 @@
     },
     {
       "path": "",
-      "accessCount": 6,
-      "lastAccessed": 1780817845843,
+      "accessCount": 7,
+      "lastAccessed": 1780821240443,
       "type": "directory"
     },
     {
       "path": "src\\paddle_ocr_service.py",
-      "accessCount": 6,
-      "lastAccessed": 1780818419604,
+      "accessCount": 7,
+      "lastAccessed": 1780823145361,
       "type": "file"
-    },
-    {
-      "path": "src",
-      "accessCount": 6,
-      "lastAccessed": 1780818448406,
-      "type": "directory"
     },
     {
       "path": "test_field_extractor_debug.py",
       "accessCount": 5,
       "lastAccessed": 1780808686088,
-      "type": "file"
-    },
-    {
-      "path": "requirements.txt",
-      "accessCount": 5,
-      "lastAccessed": 1780818436417,
       "type": "file"
     },
     {
@@ -219,9 +225,15 @@
       "type": "file"
     },
     {
-      "path": "env_setup.cmd",
+      "path": "src\\text_corrector.py",
       "accessCount": 4,
-      "lastAccessed": 1780818462093,
+      "lastAccessed": 1780824335392,
+      "type": "file"
+    },
+    {
+      "path": "run.cmd",
+      "accessCount": 4,
+      "lastAccessed": 1780824697419,
       "type": "file"
     },
     {
@@ -237,10 +249,10 @@
       "type": "file"
     },
     {
-      "path": "src\\text_corrector.py",
+      "path": "python\\Lib\\site-packages\\paddleocr",
       "accessCount": 3,
-      "lastAccessed": 1780818384746,
-      "type": "file"
+      "lastAccessed": 1780824627278,
+      "type": "directory"
     },
     {
       "path": "src\\file_handler.py",
@@ -285,15 +297,15 @@
       "type": "file"
     },
     {
-      "path": "python\\Lib\\site-packages\\paddleocr",
-      "accessCount": 2,
-      "lastAccessed": 1780817282237,
-      "type": "directory"
-    },
-    {
       "path": "src\\main.py",
       "accessCount": 2,
       "lastAccessed": 1780817839065,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI~1\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\b3eefffwn.output",
+      "accessCount": 2,
+      "lastAccessed": 1780821677424,
       "type": "file"
     },
     {
@@ -393,12 +405,6 @@
       "type": "file"
     },
     {
-      "path": "run.cmd",
-      "accessCount": 1,
-      "lastAccessed": 1780816042292,
-      "type": "file"
-    },
-    {
       "path": "python\\Lib\\site-packages\\paddleocr\\_pipelines\\ocr.py",
       "accessCount": 1,
       "lastAccessed": 1780817285992,
@@ -414,6 +420,18 @@
       "path": "C:\\Users\\TRIBUI~1\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\b21azdgog.output",
       "accessCount": 1,
       "lastAccessed": 1780819015248,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI~1\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\bii63cqcj.output",
+      "accessCount": 1,
+      "lastAccessed": 1780822191301,
+      "type": "file"
+    },
+    {
+      "path": "C:\\Users\\TRIBUI~1\\AppData\\Local\\Temp\\claude\\D--Code-AI-extract\\5236a536-bcba-4db5-b6d5-7b1bd4f95dc1\\tasks\\bpqwtgube.output",
+      "accessCount": 1,
+      "lastAccessed": 1780823271005,
       "type": "file"
     }
   ],
