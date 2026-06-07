@@ -1,0 +1,138 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1780801836235,
+  "projectRoot": "D:\\Code\\AI-extract",
+  "techStack": {
+    "languages": [
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "requirements.txt"
+        ]
+      }
+    ],
+    "frameworks": [],
+    "packageManager": "pip",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": "snake_case",
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "assets",
+      "bin",
+      "src"
+    ],
+    "gitBranches": {
+      "defaultBranch": "master",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "assets": {
+      "path": "assets",
+      "purpose": "Static assets",
+      "fileCount": 2,
+      "lastAccessed": 1780801836113,
+      "keyFiles": [
+        "screenshot_v2.2.png",
+        "screenshot_v2.2_en.png"
+      ]
+    },
+    "bin": {
+      "path": "bin",
+      "purpose": "Executable scripts",
+      "fileCount": 2,
+      "lastAccessed": 1780801836115,
+      "keyFiles": [
+        "wget.exe"
+      ]
+    },
+    "demo": {
+      "path": "demo",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1780801836117,
+      "keyFiles": [
+        "demo1.png",
+        "demo2.pdf",
+        "demo3.png"
+      ]
+    },
+    "models": {
+      "path": "models",
+      "purpose": "Data models",
+      "fileCount": 0,
+      "lastAccessed": 1780801836118,
+      "keyFiles": []
+    },
+    "ollama": {
+      "path": "ollama",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1780801836119,
+      "keyFiles": [
+        "ollama.exe",
+        "vc_redist.x64.exe"
+      ]
+    },
+    "python": {
+      "path": "python",
+      "purpose": null,
+      "fileCount": 34,
+      "lastAccessed": 1780801836119,
+      "keyFiles": [
+        "libcrypto-3.dll",
+        "libffi-8.dll",
+        "libssl-3.dll",
+        "LICENSE.txt",
+        "pyexpat.pyd"
+      ]
+    },
+    "src": {
+      "path": "src",
+      "purpose": "Source code",
+      "fileCount": 8,
+      "lastAccessed": 1780801836202,
+      "keyFiles": [
+        "config.py",
+        "file_handler.py",
+        "lang_handler.py",
+        "main.py",
+        "ocr_worker.py"
+      ]
+    },
+    "ollama\\lib": {
+      "path": "ollama\\lib",
+      "purpose": "Library code",
+      "fileCount": 0,
+      "lastAccessed": 1780801836215,
+      "keyFiles": []
+    },
+    "python\\Lib": {
+      "path": "python\\Lib",
+      "purpose": "Library code",
+      "fileCount": 0,
+      "lastAccessed": 1780801836220,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}
