@@ -17,11 +17,14 @@ Markdown==3.10.2
 # OCR engine — PaddleOCR-VL v1.5 document parser
 paddleocr[doc-parser]==3.6.0
 # paddlex[ocr] is pulled in automatically by paddleocr[doc-parser]
-# paddlepaddle CPU must be installed from official index (not PyPI):
+# paddlepaddle: install GPU build from official index (auto-detects GPU at runtime):
+#   pip install paddlepaddle-gpu==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/cu126/
+# CPU fallback:
 #   pip install paddlepaddle==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
 
 # Vietnamese OCR text correction (protonx-models/protonx-legal-tc)
-transformers==5.10.2
+# transformers 4.x required — 5.x breaks sentencepiece tokenizer for ViT5
+transformers==4.47.1
 sentencepiece==0.2.1
 # torch CPU-only — install separately with:
 #   pip install torch --index-url https://download.pytorch.org/whl/cpu

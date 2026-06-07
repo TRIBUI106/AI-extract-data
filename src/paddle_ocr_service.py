@@ -22,11 +22,14 @@ def _get_pipeline():
     global _pipeline_instance
     if _pipeline_instance is None:
         from paddleocr import PaddleOCRVL  # deferred import keeps startup fast
+        import paddle
+        device = "gpu" if paddle.device.cuda.device_count() > 0 else "cpu"
+        print(f"[paddle_ocr_service] Using device: {device}")
         _pipeline_instance = PaddleOCRVL(
             pipeline_version="v1.5",
             use_doc_orientation_classify=False,
             use_doc_unwarping=False,
-            device="cpu",
+            device=device,
         )
     return _pipeline_instance
 
