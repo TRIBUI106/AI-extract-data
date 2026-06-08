@@ -1,0 +1,7 @@
+{
+  "tool_name": "PowerShell",
+  "tool_input_preview": "{\"command\":\"cd D:\\\\Code\\\\AI-extract; .\\\\python\\\\python.exe -m pip install \\\"nvidia-cudnn-cu12==9.5.1.17\\\" --force-reinstall 2>&1 | tail -5\",\"description\":\"Downgrade cudnn to version PaddlePaddle requi...",
+  "error": "Exit code 1\ntail : The term 'tail' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the \r\npath is correct and try again.\r\nAt line:1 char:114\r\n+ ... nstall \"nvidia-cudnn-cu12==9.5.1.17\" --force-reinstall 2>&1 | tail -5\r\n+                                                                   ~~~~\r\n    + CategoryInfo          : ObjectNotFound: (tail:String) [], CommandNotFoundException\r\n    + Fu...",
+  "timestamp": "2026-06-08T03:23:25.582Z",
+  "retry_count": 1
+}

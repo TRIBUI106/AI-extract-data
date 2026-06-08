@@ -147,6 +147,12 @@
       "type": "file"
     },
     {
+      "path": "src\\ocr_worker.py",
+      "accessCount": 16,
+      "lastAccessed": 1780884334137,
+      "type": "file"
+    },
+    {
       "path": "src\\ui\\output_panel.py",
       "accessCount": 3,
       "lastAccessed": 1780572954560,
@@ -159,15 +165,15 @@
       "type": "file"
     },
     {
-      "path": "src\\ocr_worker.py",
-      "accessCount": 13,
-      "lastAccessed": 1780818431945,
+      "path": "src\\paddle_ocr_service.py",
+      "accessCount": 15,
+      "lastAccessed": 1780913091349,
       "type": "file"
     },
     {
       "path": "src\\config.py",
-      "accessCount": 11,
-      "lastAccessed": 1780818453508,
+      "accessCount": 12,
+      "lastAccessed": 1780911648823,
       "type": "file"
     },
     {
@@ -186,6 +192,12 @@
       "path": "requirements.txt",
       "accessCount": 10,
       "lastAccessed": 1780826801586,
+      "type": "file"
+    },
+    {
+      "path": "src\\text_corrector.py",
+      "accessCount": 10,
+      "lastAccessed": 1780885389390,
       "type": "file"
     },
     {
@@ -213,12 +225,6 @@
       "type": "directory"
     },
     {
-      "path": "src\\paddle_ocr_service.py",
-      "accessCount": 7,
-      "lastAccessed": 1780823145361,
-      "type": "file"
-    },
-    {
       "path": "test_field_extractor_debug.py",
       "accessCount": 5,
       "lastAccessed": 1780808686088,
@@ -237,16 +243,16 @@
       "type": "file"
     },
     {
-      "path": "src\\text_corrector.py",
-      "accessCount": 4,
-      "lastAccessed": 1780824335392,
-      "type": "file"
-    },
-    {
       "path": "run.cmd",
       "accessCount": 4,
       "lastAccessed": 1780824697419,
       "type": "file"
+    },
+    {
+      "path": "python\\Lib\\site-packages\\paddleocr",
+      "accessCount": 4,
+      "lastAccessed": 1780911694120,
+      "type": "directory"
     },
     {
       "path": "src\\ollama_service.py",
@@ -259,12 +265,6 @@
       "accessCount": 3,
       "lastAccessed": 1780810425471,
       "type": "file"
-    },
-    {
-      "path": "python\\Lib\\site-packages\\paddleocr",
-      "accessCount": 3,
-      "lastAccessed": 1780824627278,
-      "type": "directory"
     },
     {
       "path": "src\\file_handler.py",
