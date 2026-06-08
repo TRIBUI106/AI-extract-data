@@ -23,6 +23,13 @@ def _get_pipeline():
     if _pipeline_instance is None:
         from paddleocr import PaddleOCRVL  # deferred import keeps startup fast
         import paddle
+
+        # Point PaddleX to local model cache to avoid re-downloading
+        models_dir = os.path.join(os.path.dirname(__file__), "..", "models", "paddlex")
+        os.environ.setdefault("PADDLE_PDX_CACHE_HOME", os.path.abspath(models_dir))
+        os.environ.setdefault("PADDLE_PDX_DISABLE_MODEL_SOURCE_CHECK", "True")
+
+        paddle.disable_static()
         device = "gpu" if paddle.device.cuda.device_count() > 0 else "cpu"
         print(f"[paddle_ocr_service] Using device: {device}")
         _pipeline_instance = PaddleOCRVL(

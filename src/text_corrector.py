@@ -18,19 +18,24 @@ _MODEL_ID = "protonx-models/protonx-legal-tc"
 _MAX_INPUT_TOKENS = 150   # Max tokens per chunk sent to the model
 _MAX_OUTPUT_TOKENS = 256  # Generator ceiling per chunk
 
+_device = None
+
 
 def _load_model():
     """Download (if needed) and load the tokenizer + model into module globals."""
-    global _tokenizer, _model
+    global _tokenizer, _model, _device
 
     if _tokenizer is not None and _model is not None:
         return  # Already loaded
 
+    import torch
     from transformers import AutoTokenizer, AutoModelForSeq2SeqLM  # type: ignore
 
-    print(f"[text_corrector] Loading model '{_MODEL_ID}' (first-time download may take a while)…")
+    _device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"[text_corrector] Loading model '{_MODEL_ID}' on {_device} (first-time download may take a while)…")
     _tokenizer = AutoTokenizer.from_pretrained(_MODEL_ID)
     _model = AutoModelForSeq2SeqLM.from_pretrained(_MODEL_ID)
+    _model.to(_device)
     _model.eval()
     print("[text_corrector] Model ready.")
 
@@ -108,13 +113,13 @@ def correct_text(text: str) -> str:
             truncation=True,
             max_length=_MAX_INPUT_TOKENS,
         )
+        inputs = {k: v.to(_device) for k, v in inputs.items()}
         outputs = _model.generate(
             **inputs,
             max_new_tokens=_MAX_OUTPUT_TOKENS,
-            num_beams=4,
-            early_stopping=True,
+            num_beams=1,
         )
         corrected = _tokenizer.decode(outputs[0], skip_special_tokens=True)
         corrected_chunks.append(corrected)
 
-    return " ".join(corrected_chunks)
+    return "\n".join(corrected_chunks)

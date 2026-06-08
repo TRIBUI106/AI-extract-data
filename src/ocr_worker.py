@@ -293,6 +293,8 @@ class PaddleOCRWorker(QThread):
         from text_corrector import correct_text
 
         try:
+            # Phase 1: OCR all pages first
+            ocr_results = []  # list of (display_name, raw_text, ocr_duration)
             for i, (display_name, filepath, page_index) in enumerate(self.queue_items):
                 if not self.is_running:
                     break
@@ -300,7 +302,6 @@ class PaddleOCRWorker(QThread):
                 self.image_started.emit(display_name, i)
                 start_time = time.time()
 
-                # Step 1: load image bytes
                 try:
                     if page_index == -1:
                         img_bytes = file_handler.get_image_bytes(filepath)
@@ -308,46 +309,45 @@ class PaddleOCRWorker(QThread):
                         img_bytes = file_handler.extract_pdf_page_bytes(filepath, page_index)
                 except Exception as e:
                     self.error_occurred.emit(f"Failed to load {display_name}: {e}")
+                    ocr_results.append((display_name, "", 0.0))
                     continue
 
-                # Step 2: PaddleOCR → raw text
                 try:
                     self.status_update.emit(f"OCR: {display_name}")
                     raw_text = ocr_image_bytes(img_bytes)
                 except Exception as e:
                     self.error_occurred.emit(f"OCR failed for {display_name}: {e}")
+                    raw_text = ""
+                finally:
                     del img_bytes
-                    continue
 
-                del img_bytes
+                ocr_duration = time.time() - start_time
+                ocr_results.append((display_name, raw_text, ocr_duration))
 
+            if not self.is_running:
+                self.finished_all.emit()
+                return
+
+            # Phase 2: correction + emit for each page
+            for display_name, raw_text, ocr_duration in ocr_results:
                 if not self.is_running:
                     break
 
-                # Step 3: ProtonX correction
+                start_time = time.time()
                 corrected = raw_text
                 if raw_text.strip():
                     try:
                         self.status_update.emit(f"Sửa lỗi: {display_name}")
                         corrected = correct_text(raw_text)
                     except Exception as e:
-                        # Correction failed — fall back to raw text, don't abort
                         self.error_occurred.emit(f"[ProtonX] {display_name}: {e}")
                         corrected = raw_text
 
-                if not self.is_running:
-                    break
-
-                # Step 4: emit corrected text line-by-line
                 for line in corrected.splitlines():
                     self.stream_chunk.emit(line + "\n")
 
-                duration = time.time() - start_time
-
-                if not self.is_running:
-                    break
-
-                self.image_finished.emit(display_name, duration)
+                total_duration = ocr_duration + (time.time() - start_time)
+                self.image_finished.emit(display_name, total_duration)
 
             self.finished_all.emit()
 
