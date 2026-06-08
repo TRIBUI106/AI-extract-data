@@ -136,8 +136,26 @@
   "hotPaths": [
     {
       "path": "src\\ui\\main_window.py",
-      "accessCount": 2,
-      "lastAccessed": 1780571320099,
+      "accessCount": 10,
+      "lastAccessed": 1780572948227,
+      "type": "file"
+    },
+    {
+      "path": "requirements.txt",
+      "accessCount": 4,
+      "lastAccessed": 1780574003232,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui\\output_panel.py",
+      "accessCount": 3,
+      "lastAccessed": 1780572954560,
+      "type": "file"
+    },
+    {
+      "path": "src\\i18n\\en.json",
+      "accessCount": 3,
+      "lastAccessed": 1780572966138,
       "type": "file"
     },
     {
@@ -165,6 +183,12 @@
       "type": "file"
     },
     {
+      "path": "src\\i18n\\vi.json",
+      "accessCount": 2,
+      "lastAccessed": 1780572973166,
+      "type": "file"
+    },
+    {
       "path": "README.md",
       "accessCount": 1,
       "lastAccessed": 1780571303952,
@@ -189,18 +213,6 @@
       "type": "file"
     },
     {
-      "path": "src\\ui\\output_panel.py",
-      "accessCount": 1,
-      "lastAccessed": 1780571309598,
-      "type": "file"
-    },
-    {
-      "path": "requirements.txt",
-      "accessCount": 1,
-      "lastAccessed": 1780571309705,
-      "type": "file"
-    },
-    {
       "path": "src\\ui\\dialogs.py",
       "accessCount": 1,
       "lastAccessed": 1780571313433,
@@ -216,12 +228,6 @@
       "path": "README_en.md",
       "accessCount": 1,
       "lastAccessed": 1780571313972,
-      "type": "file"
-    },
-    {
-      "path": "src\\i18n\\en.json",
-      "accessCount": 1,
-      "lastAccessed": 1780571316446,
       "type": "file"
     },
     {
@@ -258,6 +264,24 @@
       "path": "models\\protonx-legal-tc\\README.md",
       "accessCount": 1,
       "lastAccessed": 1780572208596,
+      "type": "file"
+    },
+    {
+      "path": "src\\text_corrector.py",
+      "accessCount": 1,
+      "lastAccessed": 1780572886373,
+      "type": "file"
+    },
+    {
+      "path": "models\\protonx-legal-tc\\tokenizer_config.json",
+      "accessCount": 1,
+      "lastAccessed": 1780573768021,
+      "type": "file"
+    },
+    {
+      "path": "test_output.txt",
+      "accessCount": 1,
+      "lastAccessed": 1780573993351,
       "type": "file"
     }
   ],

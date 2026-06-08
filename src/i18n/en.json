@@ -28,6 +28,14 @@
     "lbl_print_headers": "Print Processing status in Output:",
     "btn_toggle_headers_on": "On",
     "btn_toggle_headers_off": "Off",
+
+    "lbl_correction": "Text Correction:",
+    "btn_toggle_correction_on": "On",
+    "btn_toggle_correction_off": "Off",
+    "msg_correction_start": "Running text correction...",
+    "msg_correction_done": "Text correction complete.",
+    "msg_correction_progress": "Correcting sentence {}/{}",
+    "msg_correction_missing_deps": "Error: torch/transformers not installed. Run: pip install torch transformers",
     "lbl_prompt": "Select Mode:",
     "prompt_labels": {
         "p_markdown": "Markdown Document (keep formatting)",

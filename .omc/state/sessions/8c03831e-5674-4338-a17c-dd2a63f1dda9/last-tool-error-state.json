@@ -1,0 +1,7 @@
+{
+  "tool_name": "PowerShell",
+  "tool_input_preview": "{\"command\":\"& 'D:\\\\Code\\\\AI-extract-data\\\\python\\\\python.exe' -c \\\"\\nfrom transformers import AutoTokenizer, AutoModelForSeq2SeqLM\\npath = r'D:\\\\Code\\\\AI-extract-data\\\\models\\\\protonx-legal-tc'\\ntok =...",
+  "error": "Exit code 1\nTraceback (most recent call last):\r\n  File \"<string>\", line 8, in <module>\r\n    print(tok.decode(out[0], skip_special_tokens=True))\r\n    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"encodings\\cp1252.py\", line 19, in encode\r\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u0110' in position 0: character maps to <undefined>",
+  "timestamp": "2026-06-04T11:51:54.140Z",
+  "retry_count": 1
+}

@@ -28,6 +28,14 @@
     "lbl_print_headers": "In Trạng thái xử lý trong Kết quả:",
     "btn_toggle_headers_on": "Bật",
     "btn_toggle_headers_off": "Tắt",
+
+    "lbl_correction": "Sửa lỗi văn bản:",
+    "btn_toggle_correction_on": "Bật",
+    "btn_toggle_correction_off": "Tắt",
+    "msg_correction_start": "Đang sửa lỗi văn bản...",
+    "msg_correction_done": "Sửa lỗi văn bản hoàn tất.",
+    "msg_correction_progress": "Đang sửa câu {}/{}",
+    "msg_correction_missing_deps": "Lỗi: chưa cài torch/transformers. Chạy: pip install torch transformers",
     "lbl_prompt": "Chọn chế độ:",
     "prompt_labels": {
         "p_markdown": "Tài liệu Markdown (giữ định dạng)",

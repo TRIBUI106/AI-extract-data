@@ -269,6 +269,11 @@ class OutputPanel(QWidget):
         self.tabs.setCurrentIndex(1)
 
     # ==================== Utility ====================
+    def set_corrected_text(self, corrected_text):
+        # Replace raw output content with corrected text (preserves appended headers).
+        self.text_output.clear()
+        self.text_output.setPlainText(corrected_text)
+
     def clear(self):
         self.text_output.clear()
         self.web_view.set_markdown("")

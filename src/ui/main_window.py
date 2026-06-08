@@ -15,6 +15,7 @@ import config
 import lang_handler
 from ocr_worker import OCRWorker
 from ollama_service import ModelUnloadWorker, PreCheckWorker
+from text_corrector import TextCorrectorWorker
 from .control_panel import ControlPanel
 from .output_panel import OutputPanel
 from .settings_dialog import SettingsDialog
@@ -46,6 +47,7 @@ class MainWindow(QMainWindow):
 
         self.worker = None # OCR worker thread
         self.unload_worker = None # Model unload worker thread
+        self.corrector_worker = None # Text correction worker thread
         self.batch_start_time = 0.0
         self._first_show_done = False
 
@@ -102,6 +104,17 @@ class MainWindow(QMainWindow):
         self.btn_toggle_headers.setChecked(True)
         self.btn_toggle_headers.toggled.connect(self.update_header_toggle_text)
         top_bar.addWidget(self.btn_toggle_headers)
+
+        # Text Correction Toggle
+        self.lbl_correction = QLabel()
+        top_bar.addWidget(self.lbl_correction)
+
+        self.btn_toggle_correction = QPushButton()
+        self.btn_toggle_correction.setObjectName("btn_toggle_headers")
+        self.btn_toggle_correction.setCheckable(True)
+        self.btn_toggle_correction.setChecked(False)
+        self.btn_toggle_correction.toggled.connect(self.update_correction_toggle_text)
+        top_bar.addWidget(self.btn_toggle_correction)
 
         # Select Mode (Prompt)
         self.lbl_prompt = QLabel("Select Mode:")
@@ -212,6 +225,10 @@ class MainWindow(QMainWindow):
         text = self.t["btn_toggle_headers_on"] if checked else self.t["btn_toggle_headers_off"]
         self.btn_toggle_headers.setText(text)
 
+    def update_correction_toggle_text(self, checked):
+        text = self.t.get("btn_toggle_correction_on", "On") if checked else self.t.get("btn_toggle_correction_off", "Off")
+        self.btn_toggle_correction.setText(text)
+
     def change_language(self, lang_name):
         self.current_lang_code = self.languages[lang_name]
         self.t = lang_handler.load_language(self.current_lang_code)
@@ -225,6 +242,9 @@ class MainWindow(QMainWindow):
         self.btn_unload.setText(self.t["btn_unload"])
         self.lbl_print_headers.setText(self.t["lbl_print_headers"])
         self.update_header_toggle_text(self.btn_toggle_headers.isChecked())
+
+        self.lbl_correction.setText(self.t.get("lbl_correction", "Text Correction:"))
+        self.update_correction_toggle_text(self.btn_toggle_correction.isChecked())
 
         self.lbl_prompt.setText(self.t["lbl_prompt"])
 
@@ -262,6 +282,7 @@ class MainWindow(QMainWindow):
         self.combo_lang.setEnabled(not is_processing)
         self.combo_prompts.setEnabled(not is_processing)
         self.btn_toggle_headers.setEnabled(not is_processing)
+        self.btn_toggle_correction.setEnabled(not is_processing)
 
     # ==================== Processing Flow ====================
     @Slot(list)
@@ -358,15 +379,51 @@ class MainWindow(QMainWindow):
     @Slot()
     def on_finished(self):
         # Called when all images have been processed.
-        self.set_processing_state(False)
-        self.control_panel.update_status()
-        # Windows taskbar progress indicator
         if self.taskbar:
             self.taskbar.stop_progress(int(self.winId()))
 
+        if self.btn_toggle_correction.isChecked():
+            self._start_text_correction()
+        else:
+            self._finalize_output()
+
+    def _start_text_correction(self):
+        raw_text = self.output_panel.text_output.toPlainText()
+        if not raw_text.strip():
+            self._finalize_output()
+            return
+
+        self.output_panel.append_text(f"\n\n--- {self.t.get('msg_correction_start', 'Running text correction...')} ---\n")
+        self.corrector_worker = TextCorrectorWorker(raw_text)
+        self.corrector_worker.correction_done.connect(self._on_correction_done)
+        self.corrector_worker.error_occurred.connect(self._on_correction_error)
+        self.corrector_worker.progress.connect(self._on_correction_progress)
+        self.corrector_worker.start()
+
+    @Slot(str)
+    def _on_correction_done(self, corrected_text):
+        self.output_panel.set_corrected_text(corrected_text)
+        self.output_panel.append_text(f"\n--- {self.t.get('msg_correction_done', 'Text correction complete.')} ---\n")
+        self._finalize_output()
+
+    @Slot(str)
+    def _on_correction_error(self, error_msg):
+        if error_msg == "missing_deps":
+            self.output_panel.append_text(f"\n--- {self.t.get('msg_correction_missing_deps', 'Error: torch/transformers not installed. Run: pip install torch transformers')} ---\n")
+        else:
+            self.output_panel.append_text(f"\n--- Correction error: {error_msg} ---\n")
+        self._finalize_output()
+
+    @Slot(int, int)
+    def _on_correction_progress(self, current, total):
+        label = self.t.get('msg_correction_progress', 'Correcting sentence {}/{}').format(current, total)
+        self.output_panel.append_text(f"\r{label}")
+
+    def _finalize_output(self):
+        self.set_processing_state(False)
+        self.control_panel.update_status()
         self.output_panel.render_fancy_output()
 
-        # Show completion dialog with total time
         if self.control_panel.progress_bar.value() == self.control_panel.progress_bar.maximum():
             total_duration = time.time() - self.batch_start_time
             total_str = self.t["msg_total"].format(total_duration)
