@@ -47,8 +47,9 @@
     "btn_run": "Start Processing",
     "btn_stop": "STOP",
 
-    "tab_raw": "Raw Output",
+    "tab_raw": "OCR Text",
     "tab_fancy": "Fancy Output",
+    "tab_extracted": "Extracted Fields",
     "lbl_proofread": "Please proofread the output, especially when there are important information.",
     "btn_copy": "Copy \"{}\"",
 

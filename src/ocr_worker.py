@@ -254,3 +254,106 @@ class OCRWorker(QThread):
     def stop(self):
         # Request the worker to stop processing (checked between images)
         self.is_running = False
+
+
+class PaddleOCRWorker(QThread):
+    """
+    Worker thread: PaddleOCR-VL v1.5 → ProtonX correction → emit text.
+
+    Flow per page:
+      1. Render image bytes (PNG/JPEG) from file_handler
+      2. PaddleOCR-VL v1.5 → raw markdown/text
+      3. ProtonX legal-tc → corrected text (falls back to raw on error)
+      4. Emit corrected text line-by-line via stream_chunk
+
+    Signals:
+    - stream_chunk:    Corrected text lines, one at a time
+    - image_started:   Emits when starting a new image (display_name, index)
+    - image_finished:  Emits when done (display_name, duration_seconds)
+    - finished_all:    Emits when entire queue is processed
+    - error_occurred:  Emits error messages
+    - status_update:   Short status string for the status bar
+    - box_detected:    Compatibility stub, never emitted
+    """
+    stream_chunk    = Signal(str)
+    image_started   = Signal(str, int)
+    image_finished  = Signal(str, float)
+    finished_all    = Signal()
+    error_occurred  = Signal(str)
+    status_update   = Signal(str)
+    box_detected    = Signal(list)
+
+    def __init__(self, queue_items):
+        super().__init__()
+        self.queue_items = queue_items
+        self.is_running = True
+
+    def run(self):
+        from paddle_ocr_service import ocr_image_bytes
+        from text_corrector import correct_text
+
+        try:
+            for i, (display_name, filepath, page_index) in enumerate(self.queue_items):
+                if not self.is_running:
+                    break
+
+                self.image_started.emit(display_name, i)
+                start_time = time.time()
+
+                # Step 1: load image bytes
+                try:
+                    if page_index == -1:
+                        img_bytes = file_handler.get_image_bytes(filepath)
+                    else:
+                        img_bytes = file_handler.extract_pdf_page_bytes(filepath, page_index)
+                except Exception as e:
+                    self.error_occurred.emit(f"Failed to load {display_name}: {e}")
+                    continue
+
+                # Step 2: PaddleOCR → raw text
+                try:
+                    self.status_update.emit(f"OCR: {display_name}")
+                    raw_text = ocr_image_bytes(img_bytes)
+                except Exception as e:
+                    self.error_occurred.emit(f"OCR failed for {display_name}: {e}")
+                    del img_bytes
+                    continue
+
+                del img_bytes
+
+                if not self.is_running:
+                    break
+
+                # Step 3: ProtonX correction
+                corrected = raw_text
+                if raw_text.strip():
+                    try:
+                        self.status_update.emit(f"Sửa lỗi: {display_name}")
+                        corrected = correct_text(raw_text)
+                    except Exception as e:
+                        # Correction failed — fall back to raw text, don't abort
+                        self.error_occurred.emit(f"[ProtonX] {display_name}: {e}")
+                        corrected = raw_text
+
+                if not self.is_running:
+                    break
+
+                # Step 4: emit corrected text line-by-line
+                for line in corrected.splitlines():
+                    self.stream_chunk.emit(line + "\n")
+
+                duration = time.time() - start_time
+
+                if not self.is_running:
+                    break
+
+                self.image_finished.emit(display_name, duration)
+
+            self.finished_all.emit()
+
+        except Exception as e:
+            self.error_occurred.emit(str(e))
+
+    def stop(self):
+        # Request the worker to stop (checked between images and chunks).
+        self.is_running = False

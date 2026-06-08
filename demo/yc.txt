@@ -1,0 +1,8 @@
+
+Tác giả văn bản
+Tên thể loại văn bản
+Ngày, tháng, năm văn bản
+Trích yếu ND
+Độ mật
+Loại bản/Mức độ tin cậy
+Họ tên người ký văn bản

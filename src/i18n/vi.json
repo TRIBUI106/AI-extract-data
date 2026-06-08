@@ -47,8 +47,9 @@
     "btn_run": "Bắt đầu xử lý",
     "btn_stop": "DỪNG LẠI",
 
-    "tab_raw": "Kết quả thô",
+    "tab_raw": "Văn bản OCR",
     "tab_fancy": "Kết quả đẹp",
+    "tab_extracted": "Trích xuất",
     "lbl_proofread": "Vui lòng kiểm tra lại kết quả, đặc biệt khi có thông tin quan trọng.",
     "btn_copy": "Sao chép \"{}\"",
 

@@ -27,10 +27,15 @@ set "OLLAMA_BIN=%OLLAMA_DIR%\ollama.exe"
 set "OLLAMA_HOST=http://127.0.0.1:11435"
 set "OLLAMA_MODELS=%SCRIPTROOT%models"
 
+@REM Model cache dirs — keep everything in project, not user profile
+set "PADDLE_PDX_CACHE_HOME=%SCRIPTROOT%models\paddlex"
+set "HF_HOME=%SCRIPTROOT%models\huggingface"
+set "TRANSFORMERS_CACHE=%SCRIPTROOT%models\huggingface\hub"
+
 @REM ============================================================
 @REM 1. CHECK & INSTALL PYTHON
 @REM ============================================================
-echo [1/6] Checking Python environment...
+echo [1/7] Checking Python environment...
 
 if exist "%PYTHON_BIN%" (
     echo - Python found in %PYTHON_DIR%. Skipping download.
@@ -63,14 +68,14 @@ if not exist "%PYTHON_BIN%" goto :ERROR_EXTRACT
 @REM ============================================================
 @REM 2. CONFIGURE ._pth FILE
 @REM ============================================================
-echo [2/6] Configuring %PYTHON_PTH%...
+echo [2/7] Configuring %PYTHON_PTH%...
 @REM This is safe to run repeatedly; it simply replaces the string if found.
 powershell -ExecutionPolicy Bypass -Command "(Get-Content '%PYTHON_PTH%') -replace '#import site', 'import site' | Set-Content '%PYTHON_PTH%'"
 
 @REM ============================================================
 @REM 3. INSTALL PIP
 @REM ============================================================
-echo [3/6] Checking for pip...
+echo [3/7] Checking for pip...
 
 if exist "%PYTHON_DIR%\Scripts\pip.exe" (
     echo - pip found. Skipping.
@@ -94,24 +99,34 @@ if exist "%PYTHON_DIR%\Scripts\pip.exe" (
 )
 
 @REM ============================================================
-@REM 4. INSTALL REQUI@REMENTS
+@REM 4. INSTALL REQUIREMENTS
 @REM ============================================================
-echo [4/6] Installing requirements...
-@REM Pip handles partially installed packages automatically.
-if exist "%SCRIPTROOT%requirements.txt" (
-    "%PYTHON_BIN%" -m pip install -r "%SCRIPTROOT%requirements.txt" --no-warn-script-location
-    if !errorlevel! neq 0 goto :ERROR_PIP
-) else (
-    echo.
+echo [4/7] Installing requirements...
+
+if not exist "%SCRIPTROOT%requirements.txt" (
     echo FATAL: Cannot find requirements.txt
     pause
     exit /b 1
 )
 
+@REM Install main requirements (includes paddleocr[doc-parser] for VL-1.5)
+"%PYTHON_BIN%" -m pip install -r "%SCRIPTROOT%requirements.txt" --no-warn-script-location
+if !errorlevel! neq 0 goto :ERROR_PIP
+
+@REM paddlepaddle CPU build from official index
+echo Installing paddlepaddle (CPU)...
+"%PYTHON_BIN%" -m pip install paddlepaddle==3.2.1 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/ --no-warn-script-location
+if !errorlevel! neq 0 goto :ERROR_PIP
+
+@REM torch CPU-only must be installed from PyTorch's own index
+echo Installing torch (CPU-only)...
+"%PYTHON_BIN%" -m pip install torch --index-url https://download.pytorch.org/whl/cpu --no-warn-script-location
+if !errorlevel! neq 0 goto :ERROR_PIP
+
 @REM ============================================================
 @REM 5. DOWNLOAD Ollama
 @REM ============================================================
-echo [5/6] Downloading Ollama...
+echo [5/7] Downloading Ollama...
 if exist "%OLLAMA_BIN%" (
     echo - Ollama found in %OLLAMA_DIR%. Skipping download.
 ) else (
@@ -176,16 +191,54 @@ if exist "%OLLAMA_BIN%" (
 )
 
 @REM ============================================================
-@REM 6. DOWNLOAD MODEL
+@REM 6. DOWNLOAD AI MODELS (PaddleOCR-VL + ProtonX)
 @REM ============================================================
-echo [6/6] Downloading DeepSeek-OCR Model...
+echo [6/7] Downloading AI models (PaddleOCR-VL-1.5 + ProtonX)...
+
+@REM Create model dirs
+if not exist "%SCRIPTROOT%models\paddlex" mkdir "%SCRIPTROOT%models\paddlex"
+if not exist "%SCRIPTROOT%models\huggingface" mkdir "%SCRIPTROOT%models\huggingface"
+
+@REM Check if PaddleOCR-VL-1.5 already downloaded
+if exist "%SCRIPTROOT%models\paddlex\official_models\PaddleOCR-VL-1.5\model.safetensors" (
+    echo - PaddleOCR-VL-1.5 found. Skipping.
+) else (
+    echo - Downloading PaddleOCR-VL-1.5 and layout models ^(~2GB^)...
+    "%PYTHON_BIN%" -c "import os; os.environ['PADDLEX_HOME']=r'%SCRIPTROOT%models\paddlex'; from paddleocr import PaddleOCRVL; PaddleOCRVL(pipeline_version='v1.5', use_doc_orientation_classify=False, use_doc_unwarping=False, device='cpu')" --no-warn-script-location
+    if !errorlevel! neq 0 (
+        echo FATAL: PaddleOCR-VL-1.5 download failed.
+        pause
+        exit /b 1
+    )
+    echo - PaddleOCR-VL-1.5 downloaded.
+)
+
+@REM Check if ProtonX already downloaded
+if exist "%SCRIPTROOT%models\huggingface\hub\models--protonx-models--protonx-legal-tc\snapshots" (
+    echo - ProtonX model found. Skipping.
+) else (
+    echo - Downloading ProtonX legal-tc ^(~300MB^)...
+    "%PYTHON_BIN%" -c "import os; os.environ['HF_HOME']=r'%SCRIPTROOT%models\huggingface'; os.environ['TRANSFORMERS_CACHE']=r'%SCRIPTROOT%models\huggingface\hub'; from transformers import AutoTokenizer, AutoModelForSeq2SeqLM; AutoTokenizer.from_pretrained('protonx-models/protonx-legal-tc'); AutoModelForSeq2SeqLM.from_pretrained('protonx-models/protonx-legal-tc')" --no-warn-script-location
+    if !errorlevel! neq 0 (
+        echo FATAL: ProtonX model download failed.
+        pause
+        exit /b 1
+    )
+    echo - ProtonX downloaded.
+)
+
+@REM ============================================================
+@REM 7. DOWNLOAD OLLAMA MODEL (qwen3:4b)
+@REM ============================================================
+echo [7/7] Downloading qwen3:4b (field extraction model)...
 
 echo Starting Ollama...
+set "OLLAMA_MODELS=%OLLAMA_MODELS%"
 start /B "" "%OLLAMA_BIN%" serve >nul 2>&1
 timeout /t 3 /nobreak >nul
 
-echo Downloading deepseek-ocr:3b (FP16)...
-"%OLLAMA_BIN%" pull deepseek-ocr:3b
+echo Downloading qwen3:4b...
+"%OLLAMA_BIN%" pull qwen3:4b
 if !errorlevel! neq 0 (
     taskkill /F /IM ollama.exe >nul 2>&1
     echo.
