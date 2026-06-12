@@ -93,6 +93,7 @@ def scan_first_page(
     client: Client,
     use_correction: bool = False,
     use_paddle: bool = True,
+    ocr_callback=None,
 ) -> dict:
     """
     OCR page 0 of a PDF and extract metadata fields.
@@ -124,7 +125,7 @@ def scan_first_page(
     try:
         if use_paddle:
             from paddle_ocr_service import ocr_image_bytes
-            raw_text = ocr_image_bytes(img_bytes)
+            raw_text = ocr_image_bytes(img_bytes, callback=ocr_callback)
         else:
             import config as _cfg
             prompt = _cfg.PROMPTS.get(_cfg.DEFAULT_PROMPT, "<|grounding|>OCR this image.")

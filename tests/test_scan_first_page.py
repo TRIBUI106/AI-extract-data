@@ -40,3 +40,41 @@ def test_scan_first_page_returns_error_on_exception():
     assert result["filename"] == "nonexistent.pdf"
     assert "File not found" in result["error_msg"]
     assert result["fields"] == {}
+
+
+def test_ocr_image_bytes_callback_called_per_block(monkeypatch):
+    """callback is called once per non-empty block in parsing_res_list fallback path."""
+    import paddle_ocr_service
+
+    fake_result = MagicMock()
+    fake_result.markdown = None  # force fallback path
+    type(fake_result).markdown = property(lambda self: (_ for _ in ()).throw(Exception("no md")))
+    fake_result.json = {
+        "parsing_res_list": [
+            {"block_order": 0, "block_content": "Block one"},
+            {"block_order": 1, "block_content": ""},
+            {"block_order": 2, "block_content": "Block two"},
+        ]
+    }
+
+    fake_pipeline = MagicMock()
+    fake_pipeline.predict.return_value = [fake_result]
+    monkeypatch.setattr(paddle_ocr_service, "_pipeline_instance", fake_pipeline)
+
+    import tempfile, os
+    tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+    tmp.write(b"\x89PNG" + b"\x00" * 10)
+    tmp.close()
+
+    collected = []
+    try:
+        result = paddle_ocr_service.ocr_image_bytes(b"\x89PNG" + b"\x00" * 10, callback=collected.append)
+    finally:
+        os.unlink(tmp.name)
+
+    assert "Block one\n" in collected
+    assert "Block two\n" in collected
+    # empty block must be skipped
+    assert len(collected) == 2
+    assert "Block one" in result
+    assert "Block two" in result

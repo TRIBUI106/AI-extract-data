@@ -41,7 +41,7 @@ def _get_pipeline():
     return _pipeline_instance
 
 
-def _extract_markdown(result) -> str:
+def _extract_markdown(result, callback=None) -> str:
     """
     Extract plain text from a PaddleOCRVL result object.
 
@@ -49,6 +49,7 @@ def _extract_markdown(result) -> str:
       { 'markdown_texts': str, 'markdown_images': ..., 'page_continuation_flags': ... }
 
     Falls back to iterating parsing_res_list if markdown is unavailable.
+    callback: optional callable(str) called per paragraph/block as it's parsed.
     """
     # Primary path: markdown output
     try:
@@ -58,6 +59,13 @@ def _extract_markdown(result) -> str:
         else:
             text = str(md)
         if text and text.strip():
+            if callback:
+                for para in text.strip().split("\n\n"):
+                    if para.strip():
+                        try:
+                            callback(para.strip() + "\n\n")
+                        except Exception:
+                            pass
             return text.strip()
     except Exception:
         pass
@@ -70,6 +78,11 @@ def _extract_markdown(result) -> str:
         for block in sorted(blocks, key=lambda b: b.get("block_order", 0)):
             content = block.get("block_content", "")
             if content and content.strip():
+                if callback:
+                    try:
+                        callback(content + "\n")
+                    except Exception:
+                        pass
                 lines.append(content.strip())
         return "\n".join(lines)
     except Exception:
@@ -78,7 +91,7 @@ def _extract_markdown(result) -> str:
     return ""
 
 
-def ocr_image_bytes(img_bytes: bytes) -> str:
+def ocr_image_bytes(img_bytes: bytes, callback=None) -> str:
     """
     Run PaddleOCR-VL v1.5 on raw image bytes and return recognised text.
 
@@ -107,7 +120,7 @@ def ocr_image_bytes(img_bytes: bytes) -> str:
 
         page_texts = []
         for res in results:
-            text = _extract_markdown(res)
+            text = _extract_markdown(res, callback=callback)
             if text:
                 page_texts.append(text)
 
