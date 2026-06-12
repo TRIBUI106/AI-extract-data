@@ -9,7 +9,8 @@ import markdown
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTabWidget,
                                QPushButton, QLabel, QTextEdit, QMenu,
                                QScrollArea, QFrame, QGridLayout, QApplication,
-                               QSizePolicy)
+                               QSizePolicy, QTableWidget, QTableWidgetItem,
+                               QProgressBar, QHeaderView, QFileDialog)
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEnginePage
 from PySide6.QtCore import Qt, Slot, QUrl, Signal
@@ -388,6 +389,168 @@ class ExtractedFieldsPanel(QWidget):
         return False
 
 
+# ==================== Tab 4: Batch Results ====================
+BATCH_COLUMNS = ["STT", "Tên file", "Tác giả", "Thể loại", "Ngày", "Người ký", "Độ mật", "Trạng thái"]
+
+
+class BatchResultsPanel(QWidget):
+    """Tab showing real-time batch scan results with CSV/Excel export."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setSpacing(6)
+
+        self._progress = QProgressBar()
+        self._progress.setTextVisible(True)
+        self._progress.setFormat("Đang scan %v/%m file...")
+        self._progress.hide()
+        layout.addWidget(self._progress)
+
+        self._table = QTableWidget(0, len(BATCH_COLUMNS))
+        self._table.setHorizontalHeaderLabels(BATCH_COLUMNS)
+        self._table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self._table.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
+        self._table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Stretch)
+        self._table.setEditTriggers(QTableWidget.NoEditTriggers)
+        self._table.setSelectionBehavior(QTableWidget.SelectRows)
+        self._table.setAlternatingRowColors(True)
+        layout.addWidget(self._table)
+
+        btn_bar = QHBoxLayout()
+        btn_bar.addStretch()
+
+        self.btn_export_csv = QPushButton("Xuất CSV")
+        self.btn_export_csv.setFixedHeight(32)
+        self.btn_export_csv.setEnabled(False)
+        self.btn_export_csv.clicked.connect(self._export_csv)
+        btn_bar.addWidget(self.btn_export_csv)
+
+        self.btn_export_excel = QPushButton("Xuất Excel")
+        self.btn_export_excel.setFixedHeight(32)
+        self.btn_export_excel.setEnabled(False)
+        self.btn_export_excel.clicked.connect(self._export_excel)
+        btn_bar.addWidget(self.btn_export_excel)
+
+        layout.addLayout(btn_bar)
+
+        self._rows: list = []
+
+    def start_scan(self, total: int):
+        """Call before BatchScanWorker starts."""
+        self._table.setRowCount(0)
+        self._rows.clear()
+        self.btn_export_csv.setEnabled(False)
+        self.btn_export_excel.setEnabled(False)
+        self._progress.setMaximum(total)
+        self._progress.setValue(0)
+        self._progress.show()
+
+    def append_row(self, result: dict):
+        """Append one scan result row. Called from row_ready signal handler."""
+        self._rows.append(result)
+        row_idx = self._table.rowCount()
+        self._table.insertRow(row_idx)
+
+        fields = result.get("fields", {})
+        status = result.get("status", "error")
+
+        values = [
+            str(row_idx + 1),
+            result.get("filename", ""),
+            fields.get("tac_gia", "—") or "—",
+            fields.get("the_loai", "—") or "—",
+            fields.get("ngay_thang_nam", "—") or "—",
+            fields.get("nguoi_ky", "—") or "—",
+            fields.get("do_mat", "—") or "—",
+            "✓ OK" if status == "ok" else f"✗ {result.get('error_msg', 'Lỗi')}",
+        ]
+
+        for col, val in enumerate(values):
+            item = QTableWidgetItem(val)
+            item.setTextAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+            self._table.setItem(row_idx, col, item)
+
+        self._progress.setValue(row_idx + 1)
+        self._table.scrollToBottom()
+
+    def finish_scan(self):
+        """Call when BatchScanWorker emits finished."""
+        self._progress.hide()
+        if self._rows:
+            self.btn_export_csv.setEnabled(True)
+            self.btn_export_excel.setEnabled(True)
+
+    def _export_csv(self):
+        import csv
+        path, _ = QFileDialog.getSaveFileName(self, "Xuất CSV", "batch_results.csv",
+                                               "CSV Files (*.csv)")
+        if not path:
+            return
+        with open(path, "w", newline="", encoding="utf-8-sig") as f:
+            writer = csv.writer(f)
+            writer.writerow(BATCH_COLUMNS)
+            for i, r in enumerate(self._rows):
+                fields = r.get("fields", {})
+                writer.writerow([
+                    i + 1,
+                    r.get("filename", ""),
+                    fields.get("tac_gia", ""),
+                    fields.get("the_loai", ""),
+                    fields.get("ngay_thang_nam", ""),
+                    fields.get("nguoi_ky", ""),
+                    fields.get("do_mat", ""),
+                    "OK" if r.get("status") == "ok" else r.get("error_msg", "Lỗi"),
+                ])
+
+    def _export_excel(self):
+        try:
+            import openpyxl
+            from openpyxl.styles import Font, PatternFill, Alignment
+        except ImportError:
+            from PySide6.QtWidgets import QMessageBox
+            QMessageBox.critical(self, "Lỗi", "Chưa cài openpyxl. Chạy: pip install openpyxl")
+            return
+
+        path, _ = QFileDialog.getSaveFileName(self, "Xuất Excel", "batch_results.xlsx",
+                                               "Excel Files (*.xlsx)")
+        if not path:
+            return
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Kết quả Batch"
+
+        header_fill = PatternFill("solid", fgColor="1E293B")
+        header_font = Font(bold=True, color="93C5FD")
+        ws.append(BATCH_COLUMNS)
+        for cell in ws[1]:
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal="center")
+
+        for i, r in enumerate(self._rows):
+            fields = r.get("fields", {})
+            ws.append([
+                i + 1,
+                r.get("filename", ""),
+                fields.get("tac_gia", ""),
+                fields.get("the_loai", ""),
+                fields.get("ngay_thang_nam", ""),
+                fields.get("nguoi_ky", ""),
+                fields.get("do_mat", ""),
+                "OK" if r.get("status") == "ok" else r.get("error_msg", "Lỗi"),
+            ])
+
+        ws.column_dimensions["B"].width = 35
+        ws.column_dimensions["C"].width = 25
+        ws.column_dimensions["D"].width = 20
+        ws.column_dimensions["E"].width = 15
+        ws.column_dimensions["F"].width = 25
+        wb.save(path)
+
+
 # ==================== Main Widget ====================
 class OutputPanel(QWidget):
     # Emitted when user clicks "Trích xuất" — carries current OCR text
@@ -425,6 +588,11 @@ class OutputPanel(QWidget):
         self.tabs.addTab(self.tab_raw, "")       # index 0
         self.tabs.addTab(self.web_view, "")      # index 1
         self.tabs.addTab(self.extracted_panel, "") # index 2
+
+        # --- Tab 4: Batch scan results ---
+        self.batch_results_panel = BatchResultsPanel()
+        self.tabs.addTab(self.batch_results_panel, "Kết quả Batch")  # index 3
+        self.tabs.setTabEnabled(3, False)
 
         self.tabs.setTabEnabled(1, False)
         self.tabs.setTabEnabled(2, False)
@@ -464,6 +632,7 @@ class OutputPanel(QWidget):
         self.tabs.setTabText(0, t.get("tab_raw", "Văn bản OCR"))
         self.tabs.setTabText(1, t.get("tab_fancy", "Kết quả đẹp"))
         self.tabs.setTabText(2, t.get("tab_extracted", "Trích xuất"))
+        self.tabs.setTabText(3, t.get("tab_batch", "Kết quả Batch"))
         self._update_copy_button_text()
 
     def _update_copy_button_text(self):
