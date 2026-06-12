@@ -14,6 +14,7 @@ from ollama import Client
 sys.path.insert(0, os.path.dirname(__file__))
 
 from field_extractor import extract_fields, EXTRACTION_MODEL
+import file_handler
 
 
 def _ocr_image(img_bytes: bytes, client: Client, ocr_model: str, ocr_prompt: str) -> str:
@@ -85,6 +86,75 @@ def process_page(
     fields["_corrected_text"] = corrected_text
 
     return fields
+
+
+def scan_first_page(
+    pdf_path: str,
+    client: Client,
+    use_correction: bool = False,
+    use_paddle: bool = True,
+) -> dict:
+    """
+    OCR page 0 of a PDF and extract metadata fields.
+
+    Returns
+    -------
+    dict with keys:
+        filename   : basename of pdf_path
+        fields     : dict of extracted fields (empty dict on error)
+        raw_text   : raw OCR text (empty string on error)
+        status     : "ok" | "error"
+        error_msg  : error description string or None
+    """
+    filename = os.path.basename(pdf_path)
+    empty_result = {
+        "filename": filename,
+        "fields": {},
+        "raw_text": "",
+        "status": "error",
+        "error_msg": None,
+    }
+
+    try:
+        img_bytes = file_handler.extract_pdf_page_bytes(pdf_path, page_index=0)
+    except Exception as exc:
+        empty_result["error_msg"] = str(exc)
+        return empty_result
+
+    try:
+        if use_paddle:
+            from paddle_ocr_service import PaddleOCRService
+            svc = PaddleOCRService.get_instance()
+            raw_text = svc.ocr_image(img_bytes)
+        else:
+            import config as _cfg
+            prompt = _cfg.PROMPTS.get(_cfg.DEFAULT_PROMPT, "<|grounding|>OCR this image.")
+            raw_text = _ocr_image(img_bytes, client, _cfg.OLLAMA_MODEL, prompt)
+    except Exception as exc:
+        empty_result["error_msg"] = f"OCR failed: {exc}"
+        return empty_result
+
+    if use_correction:
+        try:
+            from text_corrector import correct_text
+            raw_text = correct_text(raw_text)
+        except Exception:
+            pass  # correction is optional — continue with uncorrected text
+
+    try:
+        fields = extract_fields(raw_text, client, model=EXTRACTION_MODEL)
+    except Exception as exc:
+        empty_result["error_msg"] = f"Field extraction failed: {exc}"
+        empty_result["raw_text"] = raw_text
+        return empty_result
+
+    return {
+        "filename": filename,
+        "fields": fields,
+        "raw_text": raw_text,
+        "status": "ok",
+        "error_msg": None,
+    }
 
 
 def process_pdf(
