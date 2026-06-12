@@ -1,6 +1,8 @@
 # src/ui/dialogs.py
 
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QFormLayout, QSpinBox, QDialogButtonBox, QMessageBox
+from PySide6.QtWidgets import (QDialog, QVBoxLayout, QLabel, QFormLayout,
+                                QSpinBox, QDialogButtonBox, QMessageBox,
+                                QCheckBox)
 
 
 class PageRangeDialog(QDialog):
@@ -46,3 +48,32 @@ class PageRangeDialog(QDialog):
 
     def get_range(self):
         return self.spin_start.value(), self.spin_end.value()
+
+
+class ConfirmBatchDialog(QDialog):
+    """Confirm dialog before batch first-page scan."""
+
+    def __init__(self, file_count: int, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Xác nhận Scan Trang Đầu")
+        self.setFixedWidth(360)
+
+        layout = QVBoxLayout(self)
+
+        info = QLabel(f"Đã chọn <b>{file_count}</b> file PDF.\nApp sẽ OCR trang đầu và trích xuất metadata của từng file.")
+        info.setWordWrap(True)
+        layout.addWidget(info)
+
+        self.chk_correction = QCheckBox("Dùng text correction (chậm hơn, chính xác hơn)")
+        self.chk_correction.setChecked(False)
+        layout.addWidget(self.chk_correction)
+
+        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons.button(QDialogButtonBox.Ok).setText("Bắt đầu")
+        buttons.button(QDialogButtonBox.Cancel).setText("Huỷ")
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+    def use_correction(self) -> bool:
+        return self.chk_correction.isChecked()
