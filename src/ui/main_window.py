@@ -50,22 +50,25 @@ class BatchScanWorker(QThread):
     """Scans the first page of multiple PDFs sequentially off the UI thread."""
     progress = QSignal(int, int)   # (current, total)
     row_ready = QSignal(dict)      # one result dict per file
-    finished = QSignal()
+    finished = QSignal(bool)  # True if stopped by user, False if completed normally
 
     def __init__(self, pdf_paths: list, ollama_client, use_correction: bool):
         super().__init__()
         self._paths = pdf_paths
         self._client = ollama_client
         self._use_correction = use_correction
-        self._stop_flag = False
+        import threading
+        self._stop_event = threading.Event()
 
     def stop(self):
-        self._stop_flag = True
+        self._stop_event.set()
 
     def run(self):
         total = len(self._paths)
+        stopped = False
         for i, path in enumerate(self._paths):
-            if self._stop_flag:
+            if self._stop_event.is_set():
+                stopped = True
                 break
             result = scan_first_page(
                 path,
@@ -75,7 +78,7 @@ class BatchScanWorker(QThread):
             )
             self.progress.emit(i + 1, total)
             self.row_ready.emit(result)
-        self.finished.emit()
+        self.finished.emit(stopped)
 
 
 def _load_be_vietnam_pro():
@@ -635,6 +638,10 @@ class MainWindow(QMainWindow):
         if self._batch_worker and self._batch_worker.isRunning():
             return  # already running
 
+        if self.worker and self.worker.isRunning():
+            return  # main OCR worker is running, don't start batch
+
+        self.control_panel.set_processing_state(True)
         total = len(pdf_paths)
         self.output_panel.batch_results_panel.start_scan(total)
         self.output_panel.tabs.setTabEnabled(3, True)
@@ -645,6 +652,7 @@ class MainWindow(QMainWindow):
         self._batch_worker.row_ready.connect(self._on_batch_row_ready)
         self._batch_worker.progress.connect(self._on_batch_progress)
         self._batch_worker.finished.connect(self._on_batch_finished)
+        self._batch_worker.finished.connect(self._batch_worker.deleteLater)
         self._batch_worker.start()
 
     @Slot(dict)
@@ -655,10 +663,14 @@ class MainWindow(QMainWindow):
     def _on_batch_progress(self, current: int, total: int):
         self._set_status(f"Đang scan trang đầu {current}/{total} file...")
 
-    @Slot()
-    def _on_batch_finished(self):
+    @Slot(bool)
+    def _on_batch_finished(self, stopped: bool):
         self.output_panel.batch_results_panel.finish_scan()
-        self._set_status("Scan trang đầu hoàn tất")
+        self.control_panel.set_processing_state(False)
+        if stopped:
+            self._set_status("Scan trang đầu đã dừng")
+        else:
+            self._set_status("Scan trang đầu hoàn tất")
 
     # ==================== Drag and Drop ====================
     def resizeEvent(self, event):
