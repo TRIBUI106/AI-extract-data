@@ -20,6 +20,7 @@ class ControlPanel(QWidget):
     # Signals to communicate with MainWindow
     start_requested = Signal(list)  # Emitted when Run button clicked
     stop_requested = Signal()       # Emitted when Stop button clicked
+    batch_scan_requested = Signal(list, bool)  # (pdf_paths, use_correction)
 
     # ==================== Initialization ====================
     def __init__(self, parent=None):
@@ -108,6 +109,13 @@ class ControlPanel(QWidget):
         run_layout.addWidget(self.btn_stop)
         self._layout.addLayout(run_layout)
 
+        # === Batch Scan Button ===
+        self.btn_scan_first_page = QPushButton("Scan trang đầu")
+        self.btn_scan_first_page.setObjectName("btn_scan_first_page")
+        self.btn_scan_first_page.setFixedHeight(32)
+        self.btn_scan_first_page.clicked.connect(self._on_scan_first_page_click)
+        self._layout.addWidget(self.btn_scan_first_page)
+
         # === Image Viewer & Navigation Buttons ===
         viewer_layout = QHBoxLayout()
         viewer_layout.setContentsMargins(0, 0, 0, 0)
@@ -155,6 +163,7 @@ class ControlPanel(QWidget):
         self.btn_add_img.setText(t.get("btn_add_img", "Thêm ảnh"))
         self.btn_add_pdf.setText(t.get("btn_add_pdf", "Thêm PDF"))
         self.btn_clear.setText(t.get("btn_clear", "Xóa hàng"))
+        self.btn_scan_first_page.setText(t.get("btn_scan_first_page", "Scan trang đầu"))
         self.btn_stop.setText(t.get("btn_stop", "DỪNG LẠI"))
         lbl_text = t.get("lbl_queue", "Hàng chờ xử lý:")
         # Strip trailing colon — we render it in the label itself
@@ -187,6 +196,7 @@ class ControlPanel(QWidget):
         self.btn_add_img.setEnabled(inputs_enabled)
         self.btn_add_pdf.setEnabled(inputs_enabled)
         self.btn_clear.setEnabled(inputs_enabled)
+        self.btn_scan_first_page.setEnabled(inputs_enabled)
 
         if is_processing:
             # Reset progress bar text to processing format
@@ -337,6 +347,22 @@ class ControlPanel(QWidget):
     # ==================== Stop Button ====================
     def on_stop_click(self):
         self.stop_requested.emit()
+
+    def _on_scan_first_page_click(self):
+        from PySide6.QtWidgets import QFileDialog, QDialog
+        from .dialogs import ConfirmBatchDialog
+
+        paths, _ = QFileDialog.getOpenFileNames(
+            self, "Chọn file PDF để scan trang đầu", "", "PDF Files (*.pdf)"
+        )
+        if not paths:
+            return
+
+        dlg = ConfirmBatchDialog(len(paths), self)
+        if dlg.exec() != QDialog.Accepted:
+            return
+
+        self.batch_scan_requested.emit(paths, dlg.use_correction())
 
     # ==================== Processing Callbacks ====================
     def on_process_started(self, index):
