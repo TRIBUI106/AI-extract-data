@@ -10,11 +10,12 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTabWidget,
                                QPushButton, QLabel, QTextEdit, QMenu,
                                QScrollArea, QFrame, QGridLayout, QApplication,
                                QSizePolicy, QTableWidget, QTableWidgetItem,
-                               QProgressBar, QHeaderView, QFileDialog)
+                               QProgressBar, QHeaderView, QFileDialog,
+                               QPlainTextEdit)
 from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWebEngineCore import QWebEnginePage
 from PySide6.QtCore import Qt, Slot, QUrl, Signal
-from PySide6.QtGui import QTextCursor
+from PySide6.QtGui import QTextCursor, QFont
 
 
 # Dark-themed CSS for the WebEngine rendered output
@@ -408,6 +409,17 @@ class BatchResultsPanel(QWidget):
         self._progress.hide()
         layout.addWidget(self._progress)
 
+        self._status_label = QLabel("—")
+        self._status_label.setStyleSheet("font-weight: bold; padding: 2px 0;")
+        layout.addWidget(self._status_label)
+
+        self._log_area = QPlainTextEdit()
+        self._log_area.setReadOnly(True)
+        self._log_area.setFixedHeight(80)
+        self._log_area.setFont(QFont("Consolas", 9))
+        self._log_area.setPlaceholderText("Log scan sẽ hiển thị ở đây...")
+        layout.addWidget(self._log_area)
+
         self._table = QTableWidget(0, len(BATCH_COLUMNS))
         self._table.setHorizontalHeaderLabels(BATCH_COLUMNS)
         self._table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
@@ -446,6 +458,8 @@ class BatchResultsPanel(QWidget):
         self._progress.setMaximum(total)
         self._progress.setValue(0)
         self._progress.show()
+        self._log_area.clear()
+        self._status_label.setText("—")
 
     def append_row(self, result: dict):
         """Append one scan result row. Called from row_ready signal handler."""
@@ -481,6 +495,14 @@ class BatchResultsPanel(QWidget):
         if self._rows:
             self.btn_export_csv.setEnabled(True)
             self.btn_export_excel.setEnabled(True)
+
+    def append_log(self, text: str):
+        self._log_area.moveCursor(QTextCursor.End)
+        self._log_area.insertPlainText(text + "\n")
+        self._log_area.moveCursor(QTextCursor.End)
+
+    def update_status(self, text: str):
+        self._status_label.setText(text)
 
     def _export_csv(self):
         import csv

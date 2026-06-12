@@ -48,9 +48,11 @@ class FieldExtractionWorker(QThread):
 
 class BatchScanWorker(QThread):
     """Scans the first page of multiple PDFs sequentially off the UI thread."""
-    progress = QSignal(int, int)   # (current, total)
-    row_ready = QSignal(dict)      # one result dict per file
-    finished = QSignal(bool)  # True if stopped by user, False if completed normally
+    progress     = QSignal(int, int)   # (current, total)
+    row_ready    = QSignal(dict)       # one result dict per file
+    finished     = QSignal(bool)       # True if stopped by user, False if completed normally
+    log_message  = QSignal(str)        # per-file status log lines
+    stream_chunk = QSignal(str)        # OCR text blocks as they arrive
 
     def __init__(self, pdf_paths: list, ollama_client, use_correction: bool):
         super().__init__()
@@ -70,12 +72,29 @@ class BatchScanWorker(QThread):
             if self._stop_event.is_set():
                 stopped = True
                 break
+
+            filename = os.path.basename(path)
+            self.log_message.emit(f"[{i+1}/{total}] {filename} — đang OCR...")
+
+            sig = self.stream_chunk
+            def _ocr_chunk(text, _sig=sig):
+                _sig.emit(text)
+
             result = scan_first_page(
                 path,
                 self._client,
                 use_correction=self._use_correction,
                 use_paddle=_cfg.USE_PADDLE_OCR,
+                ocr_callback=_ocr_chunk,
             )
+
+            char_count = len(result.get("raw_text", ""))
+            if result.get("status") == "ok":
+                self.log_message.emit(f"[{i+1}/{total}] ✓ {filename} hoàn tất ({char_count} ký tự)")
+            else:
+                err = result.get("error_msg", "lỗi không xác định")
+                self.log_message.emit(f"[{i+1}/{total}] ✗ {filename} — {err}")
+
             self.progress.emit(i + 1, total)
             self.row_ready.emit(result)
         self.finished.emit(stopped)
