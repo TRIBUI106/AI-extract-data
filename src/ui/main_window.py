@@ -678,11 +678,27 @@ class MainWindow(QMainWindow):
         self._batch_worker.row_ready.connect(self._on_batch_row_ready)
         self._batch_worker.progress.connect(self._on_batch_progress)
         self._batch_worker.finished.connect(self._on_batch_finished)
+        self._batch_worker.log_message.connect(self._on_batch_log)
+        self._batch_worker.stream_chunk.connect(self._on_batch_stream_chunk)
         self._batch_worker.start()
 
     @Slot(dict)
     def _on_batch_row_ready(self, result: dict):
         self.output_panel.batch_results_panel.append_row(result)
+
+    @Slot(str)
+    def _on_batch_log(self, text: str):
+        self.output_panel.batch_results_panel.append_log(text)
+        self.output_panel.batch_results_panel.update_status(text)
+        if "— đang OCR..." in text:
+            parts = text.split("] ", 1)
+            if len(parts) == 2:
+                fname = parts[1].replace(" — đang OCR...", "").strip()
+                self.output_panel.append_text(f"\n\n=== {fname} ===\n")
+
+    @Slot(str)
+    def _on_batch_stream_chunk(self, text: str):
+        self.output_panel.append_text(text)
 
     @Slot(int, int)
     def _on_batch_progress(self, current: int, total: int):
