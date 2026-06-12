@@ -216,18 +216,18 @@ class MainWindow(QMainWindow):
         self.btn_toggle_headers.setCheckable(True)
         self.btn_toggle_headers.setChecked(True)
         self.btn_toggle_headers.toggled.connect(self.update_header_toggle_text)
-        top_bar.addWidget(self.btn_toggle_headers)
+        toolbar_layout.addWidget(self.btn_toggle_headers)
 
         # Text Correction Toggle
         self.lbl_correction = QLabel()
-        top_bar.addWidget(self.lbl_correction)
+        toolbar_layout.addWidget(self.lbl_correction)
 
         self.btn_toggle_correction = QPushButton()
         self.btn_toggle_correction.setObjectName("btn_toggle_headers")
         self.btn_toggle_correction.setCheckable(True)
         self.btn_toggle_correction.setChecked(False)
         self.btn_toggle_correction.toggled.connect(self.update_correction_toggle_text)
-        top_bar.addWidget(self.btn_toggle_correction)
+        toolbar_layout.addWidget(self.btn_toggle_correction)
 
         sep2 = QFrame()
         sep2.setObjectName("toolbar_separator")
@@ -451,6 +451,8 @@ class MainWindow(QMainWindow):
     # ==================== Processing Flow ====================
     @Slot(list)
     def initiate_processing(self, queue):
+        if self._batch_worker and self._batch_worker.isRunning():
+            return
         self.set_processing_state(True)
         self._pending_queue = queue
         self._pending_pid = self.combo_prompts.currentData()
@@ -522,6 +524,11 @@ class MainWindow(QMainWindow):
         self.worker.start()
 
     def stop_processing(self):
+        if self._batch_worker and self._batch_worker.isRunning():
+            self._batch_worker.stop()
+            self._set_status("Đang dừng scan...")
+            return
+
         if self.worker and self.worker.isRunning():
             self._user_stopped = True
             self.worker.stop()
@@ -652,7 +659,6 @@ class MainWindow(QMainWindow):
         self._batch_worker.row_ready.connect(self._on_batch_row_ready)
         self._batch_worker.progress.connect(self._on_batch_progress)
         self._batch_worker.finished.connect(self._on_batch_finished)
-        self._batch_worker.finished.connect(self._batch_worker.deleteLater)
         self._batch_worker.start()
 
     @Slot(dict)
@@ -667,6 +673,7 @@ class MainWindow(QMainWindow):
     def _on_batch_finished(self, stopped: bool):
         self.output_panel.batch_results_panel.finish_scan()
         self.control_panel.set_processing_state(False)
+        self._batch_worker = None
         if stopped:
             self._set_status("Scan trang đầu đã dừng")
         else:
