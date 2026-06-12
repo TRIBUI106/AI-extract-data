@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"cd \\\"D:\\\\Code\\\\AI-extract\\\" && .\\\\python\\\\python.exe -m pytest tests/test_scan_first_page.py -v 2>&1\",\"description\":\"Run tests with project's embedded Python\"}",
+  "error": "Exit code 127\n/usr/bin/bash: line 1: .pythonpython.exe: command not found",
+  "timestamp": "2026-06-12T07:21:12.538Z",
+  "retry_count": 2
+}

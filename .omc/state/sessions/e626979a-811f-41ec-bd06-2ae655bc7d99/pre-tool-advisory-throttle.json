@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "entries": {
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1781248780939,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "459c54e5f35d6a58dcd90d2aecc21fa6d1f35d241bc5b134c506f87dc7b6d67b": {
+      "last_emitted_at_ms": 1781248535101,
+      "message": "Combine searches in parallel when investigating multiple patterns."
+    },
+    "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
+      "last_emitted_at_ms": 1781248418128,
+      "message": "Verify changes work after editing. Test functionality before marking complete."
+    },
+    "ec0b98ce071bf6dd0aa5015314272f59dab69935e3dd83fc198c041016fb452e": {
+      "last_emitted_at_ms": 1781248408660,
+      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Final fixes: top_bar NameError + stop wiring + deleteLater + initiate_processing guard"
+    },
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1781248274440,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
+    "9bbfd3e776089cd3db6f50aa691f65da68aa85a20795af37746f870ec04b962c": {
+      "last_emitted_at_ms": 1781247986852,
+      "message": "Spawning agent: oh-my-claudecode:code-reviewer (opus) | Task: Final code review: batch first-page scan feature"
+    },
+    "7f7b759d1f87ecaa2f730b07575302569b8f3c89884abc1e5ef7b65101590a98": {
+      "last_emitted_at_ms": 1781247919617,
+      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) | Task: Re-review: Task 6 code quality after fixes"
+    },
+    "0b596e8a964f5bc644f18dc6d8ddbe3c4328773368e880c0cb1031bd297f3043": {
+      "last_emitted_at_ms": 1781247106821,
+      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Fix quality issues in Task 6 BatchScanWorker"
+    },
+    "cb4594de7c1476ea9fbe7336ae948e084a80180d6fcad7a26a0e45f27d39b537": {
+      "last_emitted_at_ms": 1781247009963,
+      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) | Task: Code quality review: Task 6 BatchScanWorker"
+    },
+    "0ce1d6de5a7d7cc3bee89abf5f6fc2f0307ffcc28f5c4e873270cc6b70da71f3": {
+      "last_emitted_at_ms": 1781247003678,
+      "message": "Spawning agent: oh-my-claudecode:code-reviewer (haiku) | Task: Spec review: Task 6 BatchScanWorker"
+    },
+    "02a2e7cf106a74b128bc82069df281c7ab568995cfd4ff752154bfc90f843a2f": {
+      "last_emitted_at_ms": 1781246778935,
+      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Task 6: Add BatchScanWorker and wire signals in main_window.py"
+    },
+    "d46a1d83195fc0bd7a8bfbe91b264d7386560c9cacbf29eb43885bf0b5e7bc81": {
+      "last_emitted_at_ms": 1781246708727,
+      "message": "Spawning agent: oh-my-claudecode:code-reviewer (haiku) | Task: Spec review: Task 5 ControlPanel batch button"
+    },
+    "95e4e9038e90adffe9d458ac63cc7e2c9406c3a08f782c2f839922d67adcea08": {
+      "last_emitted_at_ms": 1781246703052,
+      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) | Task: Spec review: Task 4 BatchResultsPanel"
+    },
+    "ddd15f91102028baaec469f19c6128459a6f8995ce5350075c33069723111177": {
+      "last_emitted_at_ms": 1781246696608,
+      "message": "Spawning agent: oh-my-claudecode:code-reviewer (haiku) | Task: Spec review: Task 3 ConfirmBatchDialog"
+    },
+    "c082c8de6a41efb24971b683bef124864eb94dae6e27f7ee54e253405d0913f5": {
+      "last_emitted_at_ms": 1781246424229,
+      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Task 5: Add batch scan button to control_panel.py"
+    },
+    "3586b4480952c30e01c731e0a4f37d88522d37aff6a9c3cab139d6c46b408f33": {
+      "last_emitted_at_ms": 1781246405757,
+      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Task 4: Add BatchResultsPanel to output_panel.py"
+    },
+    "9327a020cb477aaeaa2121da189ea3ce0fd508d4db34399640a1b8d4e9d12dd2": {
+      "last_emitted_at_ms": 1781246370748,
+      "message": "Spawning agent: oh-my-claudecode:executor (haiku) | Task: Task 3: Add ConfirmBatchDialog to dialogs.py"
+    },
+    "ba3a60404ad1d100fcce8dad74025f50419c62a6f7b88fb91b2ded1c32624842": {
+      "last_emitted_at_ms": 1781246188764,
+      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Fix quality issues in Task 2"
+    },
+    "3d7697e754e2bef544c1f3b4c869aa5c17d24b9ba4ccecfffaf56241b47ba455": {
+      "last_emitted_at_ms": 1781246058442,
+      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) | Task: Code quality review: Task 2 scan_first_page()"
+    },
+    "0881f1d98ca23bdbcedbd6470e671f245bdffe552197515306ed656d8302d1b9": {
+      "last_emitted_at_ms": 1781246019305,
+      "message": "Spawning agent: oh-my-claudecode:code-reviewer (sonnet) | Task: Spec review: Task 2 scan_first_page()"
+    },
+    "791ff32d8de8c14ae66e56032ab29f65ea18ac4093c2f057b55a23821ee8cd71": {
+      "last_emitted_at_ms": 1781245765843,
+      "message": "Spawning agent: oh-my-claudecode:executor (sonnet) | Task: Task 2: Add scan_first_page() to extraction_pipeline.py"
+    },
+    "83a620fb5a9e604e0ea2c047240935a6e9d8872e715d20333669e1a7225a21c8": {
+      "last_emitted_at_ms": 1781245650300,
+      "message": "Spawning agent: oh-my-claudecode:executor (haiku) | Task: Task 1: Add openpyxl to requirements.txt"
+    }
+  },
+  "updated_at": "2026-06-12T07:19:40.939Z"
+}
