@@ -19,7 +19,7 @@
   },
   "build": {
     "buildCommand": null,
-    "testCommand": "cd \"D:\\Code\\AI-extract\" && \"python\\python.exe\" -m pytest tests/test_scan_first_page.py -v 2>&1",
+    "testCommand": "cd \"D:\\Code\\AI-extract\" && python\\python.exe -m pytest tests/test_scan_first_page.py -v 2>&1 | tail -30",
     "lintCommand": null,
     "devCommand": null,
     "scripts": {}
@@ -138,8 +138,26 @@
   "hotPaths": [
     {
       "path": "src\\ui\\main_window.py",
-      "accessCount": 38,
-      "lastAccessed": 1781248451279,
+      "accessCount": 45,
+      "lastAccessed": 1781255097162,
+      "type": "file"
+    },
+    {
+      "path": "src\\ui\\output_panel.py",
+      "accessCount": 24,
+      "lastAccessed": 1781253133871,
+      "type": "file"
+    },
+    {
+      "path": "src\\paddle_ocr_service.py",
+      "accessCount": 23,
+      "lastAccessed": 1781250574130,
+      "type": "file"
+    },
+    {
+      "path": "src\\extraction_pipeline.py",
+      "accessCount": 22,
+      "lastAccessed": 1781250596174,
       "type": "file"
     },
     {
@@ -152,18 +170,6 @@
       "path": "src\\ocr_worker.py",
       "accessCount": 19,
       "lastAccessed": 1781249204322,
-      "type": "file"
-    },
-    {
-      "path": "src\\paddle_ocr_service.py",
-      "accessCount": 17,
-      "lastAccessed": 1781249647650,
-      "type": "file"
-    },
-    {
-      "path": "src\\extraction_pipeline.py",
-      "accessCount": 17,
-      "lastAccessed": 1781249658286,
       "type": "file"
     },
     {
@@ -182,12 +188,6 @@
       "path": "src\\config.py",
       "accessCount": 13,
       "lastAccessed": 1781244349352,
-      "type": "file"
-    },
-    {
-      "path": "src\\ui\\output_panel.py",
-      "accessCount": 13,
-      "lastAccessed": 1781248024564,
       "type": "file"
     },
     {
@@ -210,8 +210,8 @@
     },
     {
       "path": "",
-      "accessCount": 9,
-      "lastAccessed": 1781245490730,
+      "accessCount": 10,
+      "lastAccessed": 1781250187783,
       "type": "directory"
     },
     {
@@ -275,6 +275,12 @@
       "type": "file"
     },
     {
+      "path": "src\\ui",
+      "accessCount": 4,
+      "lastAccessed": 1781249895190,
+      "type": "directory"
+    },
+    {
       "path": "src\\i18n\\en.json",
       "accessCount": 3,
       "lastAccessed": 1780572966138,
@@ -285,12 +291,6 @@
       "accessCount": 3,
       "lastAccessed": 1780810425471,
       "type": "file"
-    },
-    {
-      "path": "src\\ui",
-      "accessCount": 3,
-      "lastAccessed": 1781248292132,
-      "type": "directory"
     },
     {
       "path": "demo_output.json",

@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"if not exist \\\"D:\\\\Code\\\\AI-extract\\\\docs\\\\superpowers\\\\specs\\\" mkdir \\\"D:\\\\Code\\\\AI-extract\\\\docs\\\\superpowers\\\\specs\\\"\",\"description\":\"Ensure specs directory exists\"}",
+  "error": "Exit code 2\n/usr/bin/bash: eval: line 2: syntax error: unexpected end of file",
+  "timestamp": "2026-06-12T07:43:03.574Z",
+  "retry_count": 1
+}
