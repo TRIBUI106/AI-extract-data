@@ -27,6 +27,34 @@ def _split_sentences(text):
     return result
 
 
+def correct_text(raw_text, model_path=None):
+    """Synchronous text correction — runs model inline, returns corrected string."""
+    import torch
+    from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+    path = model_path or MODEL_DIR
+    tokenizer = AutoTokenizer.from_pretrained(path, local_files_only=True)
+    model = AutoModelForSeq2SeqLM.from_pretrained(path, local_files_only=True)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    model.eval()
+
+    segments = _split_sentences(raw_text)
+    corrected_map = {}
+    for i, (kind, seg) in enumerate(segments):
+        if kind != 'text':
+            continue
+        inputs = tokenizer(seg, return_tensors="pt", truncation=True, max_length=MAX_TOKENS).to(device)
+        with torch.no_grad():
+            outputs = model.generate(**inputs, num_beams=4, max_new_tokens=MAX_TOKENS, early_stopping=True)
+        corrected_map[i] = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    result_parts = []
+    for i, (kind, seg) in enumerate(segments):
+        result_parts.append('\n' if kind == 'newline' else corrected_map.get(i, seg))
+    return ''.join(result_parts)
+
+
 class TextCorrectorWorker(QThread):
     """
     Worker thread that runs protonx-legal-tc on OCR output to fix:

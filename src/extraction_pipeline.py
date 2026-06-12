@@ -123,9 +123,8 @@ def scan_first_page(
 
     try:
         if use_paddle:
-            from paddle_ocr_service import PaddleOCRService
-            svc = PaddleOCRService.get_instance()
-            raw_text = svc.ocr_image(img_bytes)
+            from paddle_ocr_service import ocr_image_bytes
+            raw_text = ocr_image_bytes(img_bytes)
         else:
             import config as _cfg
             prompt = _cfg.PROMPTS.get(_cfg.DEFAULT_PROMPT, "<|grounding|>OCR this image.")
