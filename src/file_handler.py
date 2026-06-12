@@ -55,30 +55,31 @@ def get_pdf_page_count(filepath):
 def extract_pdf_page_bytes(filepath, page_index, target_dpi=144):
     # Render a PDF page as an image, preprocess it, and return PNG bytes.
     doc = fitz.open(filepath)
-    page = doc.load_page(page_index)
+    try:
+        page = doc.load_page(page_index)
 
-    # Cap maximum dimension to prevent malloc errors
-    # 3500 Causes long freeze, 2000 causes infinite looping
-    MAX_DIM = 3000
-    rect = page.rect
-    width, height = rect.width, rect.height
+        # Cap maximum dimension to prevent malloc errors
+        # 3500 Causes long freeze, 2000 causes infinite looping
+        MAX_DIM = 3000
+        rect = page.rect
+        width, height = rect.width, rect.height
 
-    # Calculate zoom based on DPI
-    # 144 / 72.0 (Default PDF DPI) = 2.0x zoom.
-    zoom = target_dpi / 72.0
+        # Calculate zoom based on DPI
+        # 144 / 72.0 (Default PDF DPI) = 2.0x zoom.
+        zoom = target_dpi / 72.0
 
-    # If 144 DPI results in a huge image (>3000px), scale down to fit MAX_DIM.
-    if (width * zoom > MAX_DIM) or (height * zoom > MAX_DIM):
-        zoom = MAX_DIM / max(width, height)
-    zoom = max(zoom, 0.5)  # Minimum 50% zoom to ensure readability
+        # If 144 DPI results in a huge image (>3000px), scale down to fit MAX_DIM.
+        if (width * zoom > MAX_DIM) or (height * zoom > MAX_DIM):
+            zoom = MAX_DIM / max(width, height)
+        zoom = max(zoom, 0.5)  # Minimum 50% zoom to ensure readability
 
-    # fitz.Matrix applies uniform scaling in both dimensions
-    matrix = fitz.Matrix(zoom, zoom)
-    pix = page.get_pixmap(matrix=matrix, alpha=False)
+        # fitz.Matrix applies uniform scaling in both dimensions
+        matrix = fitz.Matrix(zoom, zoom)
+        pix = page.get_pixmap(matrix=matrix, alpha=False)
 
-    # Convert PyMuPDF pixmap to PIL Image, then preprocess
-    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-    img_bytes = preprocess_image(img)
-
-    doc.close()
+        # Convert PyMuPDF pixmap to PIL Image, then preprocess
+        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        img_bytes = preprocess_image(img)
+    finally:
+        doc.close()
     return img_bytes

@@ -134,15 +134,16 @@ def scan_first_page(
         empty_result["error_msg"] = f"OCR failed: {exc}"
         return empty_result
 
+    text_for_extraction = raw_text
     if use_correction:
         try:
             from text_corrector import correct_text
-            raw_text = correct_text(raw_text)
-        except Exception:
-            pass  # correction is optional — continue with uncorrected text
+            text_for_extraction = correct_text(raw_text)
+        except Exception as exc:
+            print(f"[scan_first_page] text_corrector skipped: {exc}")
 
     try:
-        fields = extract_fields(raw_text, client, model=EXTRACTION_MODEL)
+        fields = extract_fields(text_for_extraction, client, model=EXTRACTION_MODEL)
     except Exception as exc:
         empty_result["error_msg"] = f"Field extraction failed: {exc}"
         empty_result["raw_text"] = raw_text
